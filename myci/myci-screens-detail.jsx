@@ -2,10 +2,10 @@
 
 function ScreenHeader({ title, onBack, tone = "#472C1C", right, left }) {
   const leftEl = left !== undefined ? left : (onBack ? (
-    <button onClick={onBack} style={{ position: "relative", background: "#FEF4D612", border: "1px solid #ffffff20", borderRadius: 10, width: 38, height: 38, cursor: "pointer", display: "grid", placeItems: "center", flexShrink: 0 }}>
+    <button onClick={onBack} aria-label={t("common.back")} style={{ position: "relative", background: "#FEF4D612", border: "1px solid #ffffff20", borderRadius: 10, width: 44, height: 44, cursor: "pointer", display: "grid", placeItems: "center", flexShrink: 0 }}>
       <Icon name="arrow-left" weight="bold" size={17} style={{ color: "#FEF4D6" }} />
     </button>
-  ) : <div style={{ width: 38, flexShrink: 0 }} />);
+  ) : <div style={{ width: 44, flexShrink: 0 }} />);
   return (
     <div style={{ background: tone, padding: "52px 14px 12px", position: "relative", flexShrink: 0, display: "flex", alignItems: "center", gap: 8 }}>
       <Grain opacity={0.07} />
@@ -16,9 +16,9 @@ function ScreenHeader({ title, onBack, tone = "#472C1C", right, left }) {
   );
 }
 
-function HeaderIconBtn({ icon, onClick, dot }) {
+function HeaderIconBtn({ icon, onClick, dot, label }) {
   return (
-    <button onClick={onClick} style={{ position: "relative", background: "#FEF4D612", border: "1px solid #ffffff20", borderRadius: 10, width: 38, height: 38, cursor: "pointer", display: "grid", placeItems: "center", flexShrink: 0 }}>
+    <button onClick={onClick} aria-label={label} style={{ position: "relative", background: "#FEF4D612", border: "1px solid #ffffff20", borderRadius: 10, width: 44, height: 44, cursor: "pointer", display: "grid", placeItems: "center", flexShrink: 0 }}>
       <Icon name={icon} weight="bold" size={17} style={{ color: "#FEF4D6" }} />
       {dot && <span style={{ position: "absolute", top: 7, right: 8, width: 8, height: 8, borderRadius: "50%", background: "#D6AD08", border: "1.5px solid #472C1C" }} />}
     </button>
@@ -27,9 +27,14 @@ function HeaderIconBtn({ icon, onClick, dot }) {
 
 // ---------- POST DETAIL ----------
 function PostDetailScreen({ post, onBack, onReachOut, onOpenProfile }) {
-  const author = NEIGHBOR_BY_ID[post.authorId];
+  const { t, formatDistance } = useI18n();
+  const { user } = useAuth();
+  const author = personFor(post, user);              // works for seed + live authors
+  const canOpenProfile = !!NEIGHBOR_BY_ID[author.id]; // only seed neighbors have full profiles
   const ty = POST_TYPES[post.type];
   const event = post.type === "event";
+  const distVal = parseFloat(post.distance);
+  const distDisplay = Number.isNaN(distVal) ? post.distance : formatDistance(distVal);
   return (
     <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", background: "#EADFCB" }}>
       <ScreenHeader title={post.typeLabel} onBack={onBack} />
@@ -44,13 +49,13 @@ function PostDetailScreen({ post, onBack, onReachOut, onOpenProfile }) {
             </div>
           </div>
 
-          <button onClick={() => onOpenProfile(author.id)} style={{ marginTop: 18, width: "100%", display: "flex", alignItems: "center", gap: 12, background: "#fff5", border: "1px solid #472c1c1a", borderRadius: 14, padding: "11px 13px", cursor: "pointer" }}>
+          <button onClick={() => canOpenProfile && onOpenProfile(author.id)} style={{ marginTop: 18, width: "100%", display: "flex", alignItems: "center", gap: 12, background: "#fff5", border: "1px solid #472c1c1a", borderRadius: 14, padding: "11px 13px", cursor: canOpenProfile ? "pointer" : "default" }}>
             <Avatar person={author} size={42} />
             <div style={{ flex: 1, textAlign: "left" }}>
               <div style={{ fontFamily: "'Trocchi', serif", fontSize: 16, color: "#2A1A0E" }}>{author.name}</div>
-              <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10, color: "#9a7a52", marginTop: 2 }}>here {author.here} · gave {author.gave} · asked {author.asked}</div>
+              {author.here && <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10, color: "#9a7a52", marginTop: 2 }}>{t("profile.here", { t: author.here })} · {t("profile.gave")} {author.gave} · {t("profile.asked")} {author.asked}</div>}
             </div>
-            <Icon name="caret-right" weight="bold" size={15} style={{ color: "#9a7a52" }} />
+            {canOpenProfile && <Icon name="caret-right" weight="bold" size={15} style={{ color: "#9a7a52" }} />}
           </button>
 
           {post.photo && <div style={{ marginTop: 16 }}><PhotoSlot label={`photo — ${post.photo}`} height={170} /></div>}
@@ -62,10 +67,10 @@ function PostDetailScreen({ post, onBack, onReachOut, onOpenProfile }) {
           </div>
 
           <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-            <InfoCell icon="map-pin" label="Distance" value={post.distance} />
+            <InfoCell icon="map-pin" label={t("feed.distance")} value={distDisplay} />
             <InfoCell icon="eye" label="Shared with" value={post.visibility} />
             <InfoCell icon="clock" label="Posted" value={post.when} />
-            <InfoCell icon="handshake" label="In return" value={post.accept} />
+            <InfoCell icon="handshake" label={t("post.theyAccept")} value={post.accept} />
           </div>
         </div>
       </div>
@@ -73,7 +78,7 @@ function PostDetailScreen({ post, onBack, onReachOut, onOpenProfile }) {
       {/* sticky CTA */}
       <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "14px 18px 26px", background: "linear-gradient(180deg, transparent, #EADFCB 26%)" }}>
         <Btn full icon="chat-circle" kind={post.type === "request" || post.type === "mutual_aid" ? "sage" : "primary"} onClick={() => onReachOut(post)}>
-          {ctaFor(post.type)} — message {author.first}
+          {t("post.reachOut")} · {author.first}
         </Btn>
       </div>
     </div>
@@ -111,30 +116,48 @@ const COMPOSE_PROMPTS = {
 };
 
 function ComposeScreen({ onBack, onPosted }) {
+  const { t } = useI18n();
   const [type, setType] = useState("offer");
   const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
   const [done, setDone] = useState(false);
+  const [posting, setPosting] = useState(false);
   const ty = POST_TYPES[type];
+
+  // Persist to the live backend, then confirm. Offline-first: if the network or
+  // backend is unavailable we still confirm — the intent to give isn't lost.
+  function submit() {
+    if (posting || title.trim().length < 3) return;
+    setPosting(true);
+    const ct = COMPOSE_TYPES.find((c) => c.type === type);
+    DataService.api.createPost({
+      type, title, body,
+      icon: ct ? ct.icon : undefined,
+      tags: [POST_TYPES[type].label.toLowerCase().replace(/\s+/g, "-")],
+    })
+      .catch(() => { /* keep going — the post just won't sync until back online */ })
+      .then(() => { setPosting(false); setDone(true); });
+  }
 
   if (done) {
     return (
       <div style={{ position: "absolute", inset: 0, background: "#472C1C", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 30, textAlign: "center" }}>
         <Grain opacity={0.08} />
         <div style={{ position: "relative", width: 90, height: 90, marginBottom: 6 }}><MyceliumBloom play={true} /></div>
-        <h2 style={{ fontFamily: "'Trocchi', serif", fontWeight: 400, fontSize: 24, color: "#FEF4D6", margin: "6px 0 0", position: "relative" }}>You've seeded the Commons</h2>
-        <p style={{ fontFamily: "'Cutive', serif", fontSize: 14.5, color: "#c4ab83", margin: "10px 0 24px", maxWidth: 250, position: "relative", lineHeight: 1.5 }}>Your post is live in {NEIGHBORHOOD}. When a neighbor takes you up on it, a new thread will grow on the map.</p>
-        <Btn icon="arrow-left" kind="ghost" onClick={onPosted} style={{ position: "relative" }}>Back to the Commons</Btn>
+        <h2 style={{ fontFamily: "'Trocchi', serif", fontWeight: 400, fontSize: 24, color: "#FEF4D6", margin: "6px 0 0", position: "relative" }}>{t("compose.doneTitle")}</h2>
+        <p style={{ fontFamily: "'Cutive', serif", fontSize: 14.5, color: "#c4ab83", margin: "10px 0 24px", maxWidth: 250, position: "relative", lineHeight: 1.5 }}>{t("compose.doneBody")}</p>
+        <Btn icon="arrow-left" kind="ghost" onClick={onPosted} style={{ position: "relative" }}>{t("compose.doneBtn")}</Btn>
       </div>
     );
   }
 
   return (
     <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", background: "#EADFCB" }}>
-      <ScreenHeader title="Share something" onBack={onBack} />
+      <ScreenHeader title={t("compose.title")} onBack={onBack} />
       <div style={{ flex: 1, overflowY: "auto", padding: "18px 18px 30px", position: "relative" }}>
         <Grain opacity={0.04} />
         <div style={{ position: "relative" }}>
-          <FieldLabel>What kind of post?</FieldLabel>
+          <FieldLabel>{t("compose.whatType")}</FieldLabel>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 9, marginTop: 10 }}>
             {COMPOSE_TYPES.map((c) => {
               const on = c.type === type;
@@ -152,15 +175,15 @@ function ComposeScreen({ onBack, onPosted }) {
             })}
           </div>
 
-          <FieldLabel style={{ marginTop: 22 }}>Title</FieldLabel>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={COMPOSE_PROMPTS[type]}
+          <FieldLabel style={{ marginTop: 22 }}>{t("compose.titleLabel")}</FieldLabel>
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={COMPOSE_PROMPTS[type]} aria-label={t("compose.titleLabel")}
             style={inputStyle} />
 
-          <FieldLabel style={{ marginTop: 18 }}>Tell your neighbors more</FieldLabel>
-          <textarea rows={4} placeholder="A sentence or two — warm and specific works best." style={{ ...inputStyle, resize: "none", lineHeight: 1.5 }} />
+          <FieldLabel style={{ marginTop: 18 }}>{t("compose.bodyLabel")}</FieldLabel>
+          <textarea rows={4} value={body} onChange={(e) => setBody(e.target.value)} placeholder={t("compose.bodyPlaceholder")} aria-label={t("compose.bodyLabel")} style={{ ...inputStyle, resize: "none", lineHeight: 1.5 }} />
 
-          <FieldLabel style={{ marginTop: 18 }}>Add a photo (optional)</FieldLabel>
-          <div style={{ marginTop: 8 }}><PhotoSlot label="tap to add a photo" height={92} /></div>
+          <FieldLabel style={{ marginTop: 18 }}>{t("compose.photoLabel")}</FieldLabel>
+          <div style={{ marginTop: 8 }}><PhotoSlot label={t("compose.photoSlot")} height={92} /></div>
 
           <FieldLabel style={{ marginTop: 18 }}>What would you accept in return?</FieldLabel>
           <div style={{ display: "flex", gap: 8, marginTop: 9, flexWrap: "wrap" }}>
@@ -177,7 +200,7 @@ function ComposeScreen({ onBack, onPosted }) {
           </div>
 
           <div style={{ marginTop: 26 }}>
-            <Btn full icon="sparkle" onClick={() => setDone(true)}>Post to the Commons</Btn>
+            <Btn full icon="sparkle" onClick={submit}>{posting ? t("compose.posting") : t("compose.submit")}</Btn>
           </div>
         </div>
       </div>
@@ -280,6 +303,7 @@ function EgoNetwork({ person, exchanges, perspective }) {
 }
 
 function ProfileScreen({ personId, exchanges, onBack, onOpenPost, onOpenSettings, onOpenNotifications }) {
+  const { t } = useI18n();
   const n = NEIGHBOR_BY_ID[personId];
   const theirs = POSTS.filter((p) => p.authorId === n.id);
   const offers = theirs.filter((p) => p.type !== "request");
@@ -295,15 +319,15 @@ function ProfileScreen({ personId, exchanges, onBack, onOpenPost, onOpenSettings
   };
 
   const headerRight = n.you
-    ? <HeaderIconBtn icon="bell" onClick={onOpenNotifications} dot />
+    ? <HeaderIconBtn icon="bell" onClick={onOpenNotifications} dot label={t("notif.title")} />
     : null;
   const headerLeft = n.you
-    ? <HeaderIconBtn icon="gear-six" onClick={onOpenSettings} />
+    ? <HeaderIconBtn icon="gear-six" onClick={onOpenSettings} label={t("settings.title")} />
     : undefined;
 
   return (
     <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", background: "#EADFCB" }}>
-      <ScreenHeader title={n.you ? "" : "Neighbor"} onBack={onBack} left={headerLeft} right={headerRight} />
+      <ScreenHeader title={n.you ? "" : t("nav.me")} onBack={onBack} left={headerLeft} right={headerRight} />
       <div style={{ flex: 1, overflowY: "auto", paddingBottom: 110, position: "relative" }}>
         {/* identity band */}
         <div style={{ background: "linear-gradient(180deg,#472C1C,#3A2A1E)", padding: "18px 18px 22px", position: "relative" }}>
@@ -416,6 +440,7 @@ function Empty({ children }) {
 
 // ---------- MESSAGES ----------
 function MessagesScreen({ convos, onOpenThread, onOpenNotifications }) {
+  const { t } = useI18n();
   return (
     <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", background: "#EADFCB" }}>
       <div style={{ background: "#472C1C", padding: "54px 18px 16px", position: "relative", flexShrink: 0 }}>
@@ -423,9 +448,9 @@ function MessagesScreen({ convos, onOpenThread, onOpenNotifications }) {
         <div style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
           <div>
             <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10.5, letterSpacing: ".2em", color: "#D6AD08", textTransform: "uppercase" }}>Coordinating</div>
-            <h1 style={{ fontFamily: "var(--display)", fontSize: 24, color: "#FEF4D6", margin: "3px 0 0" }}>Messages</h1>
+            <h1 style={{ fontFamily: "var(--display)", fontSize: 24, color: "#FEF4D6", margin: "3px 0 0" }}>{t("messages.title")}</h1>
           </div>
-          <button onClick={onOpenNotifications} style={{ position: "relative", background: "#FEF4D612", border: "1px solid #ffffff20", borderRadius: 10, width: 38, height: 38, cursor: "pointer", display: "grid", placeItems: "center" }}>
+          <button onClick={onOpenNotifications} aria-label={t("notif.title")} style={{ position: "relative", background: "#FEF4D612", border: "1px solid #ffffff20", borderRadius: 10, width: 44, height: 44, cursor: "pointer", display: "grid", placeItems: "center" }}>
             <Icon name="bell" size={17} style={{ color: "#FEF4D6" }} />
             <span style={{ position: "absolute", top: 7, right: 8, width: 8, height: 8, borderRadius: "50%", background: "#D6AD08", border: "1.5px solid #472C1C" }} />
           </button>
@@ -459,6 +484,7 @@ function MessagesScreen({ convos, onOpenThread, onOpenNotifications }) {
 
 // ---------- THREAD ----------
 function ThreadScreen({ convo, onBack, onComplete, completed }) {
+  const { t } = useI18n();
   const n = NEIGHBOR_BY_ID[convo.withId];
   const post = POST_BY_ID[convo.postId];
   const [draft, setDraft] = useState("");
@@ -493,7 +519,7 @@ function ThreadScreen({ convo, onBack, onComplete, completed }) {
           {completed && (
             <div style={{ alignSelf: "center", textAlign: "center", margin: "8px 0" }}>
               <div style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "#8CA679", color: "#1c2614", fontFamily: "'Cutive', serif", fontSize: 12.5, padding: "7px 13px", borderRadius: 20 }}>
-                <Icon name="check-circle" size={15} /> Exchange complete — a thread grew on the map
+                <Icon name="check-circle" size={15} /> {t("thread.completed")}
               </div>
             </div>
           )}
@@ -508,16 +534,16 @@ function ThreadScreen({ convo, onBack, onComplete, completed }) {
             background: "#8CA67925", border: "1.5px dashed #8CA679", borderRadius: 12, padding: "10px",
             fontFamily: "'Cutive', serif", fontSize: 13.5, color: "#4a6336",
           }}>
-            <Icon name="plant" size={16} /> Done it? Close the loop & grow a thread
+            <Icon name="plant" size={16} /> {t("thread.complete")}
           </button>
         </div>
       )}
 
       {/* composer */}
       <div style={{ display: "flex", gap: 9, alignItems: "center", padding: "10px 14px 24px", flexShrink: 0 }}>
-        <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="When works for you?"
+        <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={t("thread.placeholder")} aria-label={t("thread.placeholder")}
           style={{ flex: 1, padding: "12px 14px", borderRadius: 22, border: "1px solid #472c1c22", background: "#FBF4E2", fontFamily: "'Trocchi', serif", fontSize: 14.5, outline: "none" }} />
-        <button style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--accent)", border: "none", cursor: "pointer", display: "grid", placeItems: "center", boxShadow: "0 3px 0 #8a6f00" }}>
+        <button aria-label="Send" style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--accent)", border: "none", cursor: "pointer", display: "grid", placeItems: "center", boxShadow: "0 3px 0 #8a6f00" }}>
           <Icon name="paper-plane-tilt" size={18} style={{ color: "#3A2410" }} />
         </button>
       </div>
@@ -527,10 +553,11 @@ function ThreadScreen({ convo, onBack, onComplete, completed }) {
 
 // ---------- NOTIFICATIONS ----------
 function NotificationsScreen({ onBack, onOpenPost }) {
+  const { t } = useI18n();
   const kinds = { response: "chat-circle", match: "sparkle", help: "hand-palm", thread: "plant", event: "fire" };
   return (
     <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", background: "#EADFCB" }}>
-      <ScreenHeader title="Notifications" onBack={onBack} />
+      <ScreenHeader title={t("notif.title")} onBack={onBack} />
       <div style={{ flex: 1, overflowY: "auto", padding: "12px 14px 30px", position: "relative" }}>
         <Grain opacity={0.04} />
         <div style={{ position: "relative" }}>
@@ -557,30 +584,143 @@ function NotificationsScreen({ onBack, onOpenPost }) {
 
 // ---------- SETTINGS ----------
 function SettingsScreen({ onBack }) {
+  const { t, lang, units, setLang, setUnits, languages } = useI18n();
+  const auth = useAuth();
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState(null);
+
+  function flash(msg) { setNote(msg); clearTimeout(flash._t); flash._t = setTimeout(() => setNote(null), 2600); }
+
+  // Data sovereignty: download everything the server holds about you.
+  function exportData() {
+    setBusy(true);
+    DataService.account.exportData()
+      .then((data) => {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "myci-my-data.json";
+        document.body.appendChild(a); a.click(); a.remove();
+        URL.revokeObjectURL(url);
+        flash(t("settings.exported"));
+      })
+      .catch(() => flash(t("auth.error")))
+      .then(() => setBusy(false));
+  }
+
+  function deleteAccount() {
+    if (!window.confirm(t("settings.deleteConfirm"))) return;
+    setBusy(true);
+    DataService.account.deleteAccount()
+      .then(() => { auth.setUser(null); flash(t("settings.deleted")); })
+      .catch(() => flash(t("auth.error")))
+      .then(() => setBusy(false));
+  }
+
   return (
     <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", background: "#EADFCB" }}>
-      <ScreenHeader title="Settings" onBack={onBack} />
+      <ScreenHeader title={t("settings.title")} onBack={onBack} />
       <div style={{ flex: 1, overflowY: "auto", padding: "16px 18px 40px", position: "relative" }}>
         <Grain opacity={0.04} />
         <div style={{ position: "relative" }}>
-          <SettingsGroup title="Privacy">
-            <ToggleRow label="Fuzz my location (±500m)" desc="Never show a precise pin" on />
-            <SelectRow label="Profile visible to" value="My neighborhood" />
-            <ToggleRow label="Show me on the map" desc="Opt in to an approximate node" on />
+
+          {note && (
+            <div role="status" style={{ background: "#8CA679", color: "#1c2614", fontFamily: "'Cutive', serif", fontSize: 13.5, padding: "10px 14px", borderRadius: 12, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+              <Icon name="check-circle" size={16} /> {note}
+            </div>
+          )}
+
+          {/* Language & region — the heart of "works on any street on Earth" */}
+          <SettingsGroup title={t("settings.region")}>
+            <LanguageRow label={t("settings.language")} languages={languages} lang={lang} onPick={setLang} />
+            <UnitsRow label={t("settings.units")} units={units} onPick={setUnits}
+              metricLabel={t("settings.units.metric")} imperialLabel={t("settings.units.imperial")} />
           </SettingsGroup>
-          <SettingsGroup title="Notifications">
-            <ToggleRow label="Someone responds to my post" on />
-            <ToggleRow label="New offers that match me" on />
-            <ToggleRow label="Requests I could help with" />
-            <ToggleRow label="Weekly neighborhood digest" desc="A quiet Sunday email" on />
+
+          {/* Account + data sovereignty */}
+          <SettingsGroup title={t("settings.account")}>
+            {auth.user ? (
+              <React.Fragment>
+                <div style={{ display: "flex", alignItems: "center", gap: 11, padding: "13px 14px", borderBottom: "1px solid #472c1c0e" }}>
+                  <div style={{ width: 34, height: 34, borderRadius: "50%", background: "radial-gradient(circle at 32% 28%, #D6AD08, #a07f06)", display: "grid", placeItems: "center", color: "#2A1A0E", fontFamily: "var(--display)", fontSize: 13, flexShrink: 0 }}>
+                    {(auth.user.name || "?").slice(0, 2).toUpperCase()}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0, fontFamily: "'Cutive', serif", fontSize: 14, color: "#2A1A0E", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {t("auth.signedInAs", { name: auth.user.name })}
+                  </div>
+                </div>
+                <LinkRow label={t("settings.export")} icon="download-simple" onClick={busy ? null : exportData} />
+                <LinkRow label={t("settings.delete")} icon="trash" danger onClick={busy ? null : deleteAccount} />
+                <LinkRow label={t("settings.signOut")} icon="sign-out" onClick={() => auth.signOut()} />
+              </React.Fragment>
+            ) : (
+              <div style={{ padding: "16px 14px", fontFamily: "'Cutive', serif", fontSize: 14, color: "#6a5238" }}>
+                {t("settings.signInPrompt")}
+              </div>
+            )}
           </SettingsGroup>
-          <SettingsGroup title="Account">
-            <LinkRow label="Blocked neighbors" icon="prohibit" />
-            <LinkRow label="Export my data" icon="download-simple" />
-            <LinkRow label="Delete account" icon="trash" danger />
+
+          {/* Privacy */}
+          <SettingsGroup title={t("settings.privacy")}>
+            <ToggleRow label={t("settings.fuzz")} desc={t("settings.fuzzDesc")} on />
+            <SelectRow label={t("settings.visibleTo")} value={t("settings.visNeighborhood")} />
+            <ToggleRow label={t("settings.showMap")} desc={t("settings.showMapDesc")} on />
           </SettingsGroup>
-          <p style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10, color: "#9a7a52", textAlign: "center", marginTop: 22 }}>Myci · disputes handled by a real human · v0.1</p>
+          <p style={{ fontFamily: "'Cutive', serif", fontSize: 12.5, color: "#7a5c3a", lineHeight: 1.5, margin: "-8px 2px 22px" }}>{t("settings.privacyNote")}</p>
+
+          {/* Notifications */}
+          <SettingsGroup title={t("notif.title")}>
+            <ToggleRow label={t("settings.notifResponds")} on />
+            <ToggleRow label={t("settings.notifMatches")} on />
+            <ToggleRow label={t("settings.notifHelp")} />
+            <ToggleRow label={t("settings.notifDigest")} desc={t("settings.notifDigestDesc")} on />
+          </SettingsGroup>
+
+          <p style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10, color: "#9a7a52", textAlign: "center", marginTop: 22 }}>{t("settings.human")}</p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// Language chooser — one tap per language, current highlighted.
+function LanguageRow({ label, languages, lang, onPick }) {
+  return (
+    <div style={{ padding: "13px 14px", borderBottom: "1px solid #472c1c0e" }}>
+      <div style={{ fontFamily: "'Cutive', serif", fontSize: 14.5, color: "#2A1A0E", marginBottom: 10 }}>{label}</div>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {languages.map((l) => {
+          const on = l.code === lang;
+          return (
+            <button key={l.code} onClick={() => onPick(l.code)} aria-pressed={on} style={{
+              fontFamily: "'Cutive', serif", fontSize: 14, cursor: "pointer", padding: "9px 15px", borderRadius: 20, minHeight: 40,
+              background: on ? "var(--accent)" : "#fff6", color: on ? "#3A2410" : "#5a4329",
+              border: on ? "none" : "1px solid #472c1c22", boxShadow: on ? "0 2px 5px rgba(30,16,6,.22)" : "none",
+            }}>{on ? "✓ " : ""}{l.name}</button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// Metric / imperial segmented toggle.
+function UnitsRow({ label, units, onPick, metricLabel, imperialLabel }) {
+  const opts = [{ id: "metric", label: metricLabel }, { id: "imperial", label: imperialLabel }];
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 14px" }}>
+      <div style={{ flex: 1, fontFamily: "'Cutive', serif", fontSize: 14.5, color: "#2A1A0E" }}>{label}</div>
+      <div style={{ display: "flex", gap: 6 }}>
+        {opts.map((o) => {
+          const on = o.id === units;
+          return (
+            <button key={o.id} onClick={() => onPick(o.id)} aria-pressed={on} style={{
+              fontFamily: "'Cutive', serif", fontSize: 13, cursor: "pointer", padding: "8px 12px", borderRadius: 16, minHeight: 40,
+              background: on ? "var(--accent)" : "#fff6", color: on ? "#3A2410" : "#6a5238",
+              border: on ? "none" : "1px solid #472c1c22",
+            }}>{o.label}</button>
+          );
+        })}
       </div>
     </div>
   );
@@ -616,13 +756,17 @@ function SelectRow({ label, value }) {
     </div>
   );
 }
-function LinkRow({ label, icon, danger }) {
+function LinkRow({ label, icon, danger, onClick }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 14px", borderBottom: "1px solid #472c1c0e", cursor: "pointer" }}>
+    <button onClick={onClick || undefined} style={{
+      width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "13px 14px",
+      borderBottom: "1px solid #472c1c0e", cursor: onClick ? "pointer" : "default",
+      background: "none", border: "none", textAlign: "left", minHeight: 48,
+    }}>
       <Icon name={icon} size={17} style={{ color: danger ? "#a52339" : "#6a5238" }} />
       <div style={{ flex: 1, fontFamily: "'Cutive', serif", fontSize: 14.5, color: danger ? "#a52339" : "#2A1A0E" }}>{label}</div>
       <Icon name="caret-right" weight="bold" size={13} style={{ color: "#9a7a52" }} />
-    </div>
+    </button>
   );
 }
 

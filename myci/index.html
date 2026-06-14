@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Myci — borrow more, buy less, know your neighbors</title>
+<meta name="description" content="Myci is the give-first mutual-aid network for your street. Share tools, time, food and skills with the neighbors you already have. No money, no precise location, no ads." />
+
+<meta property="og:title" content="Myci — borrow more, buy less, know your neighbors" />
+<meta property="og:description" content="The give-first network for your street. Connect a surplus to a need on one block, then let it grow." />
+<meta property="og:type" content="website" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- Fraunces (display, soft 70s serif) · Hanken Grotesk (modern body/UI) · Space Mono (eyebrows) -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="globals.css" />
+<style>html { scroll-behavior: smooth; }</style>
+</head>
+<body class="landing">
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ── Header ───────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo-lockup" href="/" aria-label="Myci home">
+      <svg class="logo-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <g stroke-linecap="round">
+          <path d="M24 24 C18 20 13 15 8 12"   stroke="#1E8A80" stroke-width="2.4"/>
+          <path d="M24 24 C31 19 36 14 40 10"  stroke="#7E9F56" stroke-width="2.4"/>
+          <path d="M24 24 C19 30 14 35 10 40"  stroke="#D26A3A" stroke-width="2.4"/>
+          <path d="M24 24 C31 31 36 35 40 38"  stroke="#E3A81B" stroke-width="2.4"/>
+        </g>
+        <g>
+          <circle cx="8"  cy="12" r="3" fill="#1E8A80"/>
+          <circle cx="40" cy="10" r="3" fill="#7E9F56"/>
+          <circle cx="10" cy="40" r="3" fill="#D26A3A"/>
+          <circle cx="40" cy="38" r="3" fill="#E3A81B"/>
+          <circle cx="24" cy="24" r="5" fill="#FBF3DE"/>
+          <circle cx="24" cy="24" r="2.6" fill="#E3A81B"/>
+        </g>
+      </svg>
+      <span class="logo-word">Myci</span>
+    </a>
+    <a class="btn btn-primary btn-sm" href="/app">Open the app</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ── Hero ───────────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <!-- Living mycelium mesh — same construction as the in-app MyceliumNet -->
+    <div class="hero-net" id="heroNet" aria-hidden="true"></div>
+    <div class="hero-veil" aria-hidden="true"></div>
+
+    <div class="wrap">
+      <span class="logo-lockup anim">
+        <svg class="logo-mark floaty" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <g stroke-linecap="round">
+            <path d="M24 24 C18 20 13 15 8 12"  stroke="#1E8A80" stroke-width="2.4"/>
+            <path d="M24 24 C31 19 36 14 40 10" stroke="#7E9F56" stroke-width="2.4"/>
+            <path d="M24 24 C19 30 14 35 10 40" stroke="#D26A3A" stroke-width="2.4"/>
+            <path d="M24 24 C31 31 36 35 40 38" stroke="#E3A81B" stroke-width="2.4"/>
+          </g>
+          <g>
+            <circle cx="8"  cy="12" r="3" fill="#1E8A80"/>
+            <circle cx="40" cy="10" r="3" fill="#7E9F56"/>
+            <circle cx="10" cy="40" r="3" fill="#D26A3A"/>
+            <circle cx="40" cy="38" r="3" fill="#E3A81B"/>
+            <circle cx="24" cy="24" r="5" fill="#FBF3DE"/>
+            <circle cx="24" cy="24" r="2.6" fill="#E3A81B"/>
+          </g>
+        </svg>
+      </span>
+      <p class="eyebrow anim d1">Mutual aid, one street at a time</p>
+      <h1 class="anim d1">Myci</h1>
+      <p class="tagline anim d2">Borrow more. Buy less.<br />Know your neighbors.</p>
+      <p class="subline anim d3">The give-first network for your street — share tools, time, food and skills with the people you already live beside.</p>
+      <div class="hero-cta anim d4">
+        <a class="btn btn-primary btn-lg" href="/app">Join your neighborhood</a>
+        <a class="btn btn-outline btn-lg" href="#how">See how it works</a>
+      </div>
+      <p class="hero-note anim d5">no money · no ads · just neighbors</p>
+    </div>
+  </section>
+
+  <!-- ── Why ────────────────────────────────────────────────────────────── -->
+  <section class="band band-paper">
+    <div class="wrap split-grid">
+      <div>
+        <p class="eyebrow reveal">Why Myci</p>
+        <h2 class="section-title reveal" style="--d:.05s">Your neighbor has a drill you need.<br />You have the ladder they keep borrowing.</h2>
+        <p class="section-lead reveal" style="--d:.1s">A good drill sits in one garage while three people down the street each buy their own. Spare tomatoes go soft two doors from someone who'd happily cook them. The things your street needs are already on your street.</p>
+        <p class="punch-line reveal" style="--d:.18s"><span class="hl">Myci just helps you find each other.</span></p>
+      </div>
+
+      <div class="reveal reveal-r" style="--d:.12s">
+        <svg class="illus" viewBox="0 0 440 360" role="img" aria-label="Two houses on a street connected by an underground mycelium thread, sharing a tomato and a book">
+          <g stroke="#33231A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+            <!-- sun -->
+            <g stroke="#E3A81B" stroke-width="3">
+              <line x1="220" y1="26" x2="220" y2="40"/>
+              <line x1="186" y1="36" x2="193" y2="48"/>
+              <line x1="254" y1="36" x2="247" y2="48"/>
+              <line x1="166" y1="64" x2="180" y2="68"/>
+              <line x1="274" y1="64" x2="260" y2="68"/>
+            </g>
+            <circle cx="220" cy="74" r="26" fill="#E3A81B" stroke="none"/>
+
+            <!-- floating shared things -->
+            <g stroke-width="2" stroke="#9c7d2e" stroke-dasharray="3 6" fill="none">
+              <path d="M150 134 C 135 158, 120 172, 110 186"/>
+              <path d="M292 132 C 308 156, 322 170, 330 186"/>
+            </g>
+            <!-- tomato -->
+            <circle cx="150" cy="120" r="15" fill="#D26A3A"/>
+            <path d="M150 105 C 146 99, 154 99, 150 105" fill="#7E9F56" stroke="#7E9F56"/>
+            <line x1="150" y1="100" x2="150" y2="107" stroke="#7E9F56" stroke-width="3"/>
+            <!-- book -->
+            <rect x="276" y="108" width="34" height="26" rx="3" fill="#1E8A80"/>
+            <line x1="293" y1="110" x2="293" y2="132" stroke="#0e4b46"/>
+
+            <!-- house A -->
+            <rect x="58" y="188" width="86" height="70" rx="3" fill="#FBF3DE"/>
+            <polygon points="50,190 101,146 152,190" fill="#E3A81B"/>
+            <rect x="73" y="218" width="22" height="40" rx="2" fill="#1E8A80"/>
+            <rect x="110" y="201" width="20" height="20" rx="2" fill="#D26A3A"/>
+
+            <!-- house B -->
+            <rect x="296" y="188" width="86" height="70" rx="3" fill="#FBF3DE"/>
+            <polygon points="288,190 339,146 390,190" fill="#1E8A80"/>
+            <rect x="345" y="218" width="22" height="40" rx="2" fill="#E3A81B"/>
+            <rect x="310" y="201" width="20" height="20" rx="2" fill="#7E9F56"/>
+
+            <!-- ground -->
+            <line x1="24" y1="258" x2="416" y2="258" stroke-width="4.5"/>
+
+            <!-- central sprout -->
+            <path d="M220 258 C 218 240, 222 230, 220 214" fill="none" stroke="#7E9F56" stroke-width="4"/>
+            <path d="M220 232 C 206 230, 200 220, 198 212 C 210 212, 218 220, 220 232 Z" fill="#7E9F56" stroke="#7E9F56"/>
+            <path d="M220 224 C 234 222, 240 212, 242 204 C 230 204, 222 212, 220 224 Z" fill="#7E9F56" stroke="#7E9F56"/>
+          </g>
+
+          <!-- underground mycelium network (amber on soil) -->
+          <g fill="none" stroke="#E3A81B" stroke-linecap="round">
+            <path d="M101 258 C 150 332, 290 332, 339 258" stroke-width="3.5"/>
+            <path d="M220 316 L 220 258" stroke-width="2" stroke-dasharray="3 6" stroke-opacity=".8"/>
+            <path d="M165 322 C 158 338, 150 344, 142 352" stroke-width="2" stroke-opacity=".7"/>
+            <path d="M275 322 C 282 338, 290 344, 298 352" stroke-width="2" stroke-opacity=".7"/>
+          </g>
+          <g>
+            <circle cx="101" cy="258" r="5" fill="#E3A81B"/>
+            <circle cx="339" cy="258" r="5" fill="#E3A81B"/>
+            <circle cx="220" cy="316" r="7" fill="#FEF4D6"/>
+            <circle cx="142" cy="352" r="3" fill="#E3A81B"/>
+            <circle cx="298" cy="352" r="3" fill="#E3A81B"/>
+            <circle cx="220" cy="258" r="4" fill="#FEF4D6"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Doom stat → counter-proof (eyebrows kept on purpose) ───────────── -->
+  <section class="band band-paper2">
+    <div class="wrap">
+      <div class="counter">
+        <div class="stat-card stat-doom reveal reveal-l">
+          <p class="stat-kicker">The doom statistic</p>
+          <p class="stat-big">3 in 5</p>
+          <p class="stat-label">of us can't name three neighbors on our own street.</p>
+        </div>
+        <div class="stat-card stat-proof reveal reveal-r" style="--d:.1s">
+          <p class="stat-kicker">The counter-proof</p>
+          <p class="stat-big">One favor</p>
+          <p class="stat-label">is all it takes to change that. Lend the drill, share the tomatoes — the rest tends to follow.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Why the name "Myci" ────────────────────────────────────────────── -->
+  <section class="band band-cocoa on-dark" id="name">
+    <div class="wrap center">
+      <p class="eyebrow reveal">Why &ldquo;Myci&rdquo;?</p>
+      <div class="name-word reveal" style="--d:.05s" aria-label="Myci">Myci</div>
+      <p class="name-blend reveal" style="--d:.1s">
+        <span><b class="nb-myc">myc</b>elium</span>
+        <span class="nb-plus">+</span>
+        <span><b class="nb-city">my ci</b>ty</span>
+      </p>
+      <div class="name-cols">
+        <article class="name-card reveal" style="--d:.05s">
+          <div class="ico">🍄</div>
+          <h3><b class="nb-myc">Myc</b>elium</h3>
+          <p>The underground web of threads that links a whole forest — quietly passing food and signals from tree to tree, so nothing goes to waste and nobody goes without. It's how a neighborhood already works, once you can see it.</p>
+        </article>
+        <article class="name-card city reveal" style="--d:.12s">
+          <div class="ico">📍</div>
+          <h3><b class="nb-city">My ci</b>ty</h3>
+          <p>And it's yours — my city, my street, my block. Hyperlocal by design, so the help is always a short walk away, never an app full of strangers across town.</p>
+        </article>
+      </div>
+      <p class="name-foot reveal" style="--d:.18s">A living network, rooted right where you live.</p>
+    </div>
+  </section>
+
+  <!-- ── How it works ───────────────────────────────────────────────────── -->
+  <section class="band band-teal on-dark" id="how">
+    <div class="wrap">
+      <p class="eyebrow reveal">How it works</p>
+      <h2 class="section-title reveal" style="--d:.05s">Three taps from stranger to neighbor.</h2>
+      <div class="steps">
+        <article class="step reveal" style="--d:.05s">
+          <div class="step-num">1</div>
+          <h3>Give first</h3>
+          <p>Start by offering something — a tool to lend, a skill, spare veg, a free hour. You arrive as a giver, not a taker.</p>
+        </article>
+        <article class="step reveal" style="--d:.15s">
+          <div class="step-num">2</div>
+          <h3>Find a match</h3>
+          <p>See what neighbors nearby are offering and asking for: food, tools, skills, rides, energy — even e-waste.</p>
+        </article>
+        <article class="step reveal" style="--d:.25s">
+          <div class="step-num">3</div>
+          <h3>Watch it grow</h3>
+          <p>Every swap draws a thread between two homes on your map. The more your street shares, the more it can find.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── What you can share ─────────────────────────────────────────────── -->
+  <section class="band band-paper">
+    <div class="wrap">
+      <p class="eyebrow reveal">What you can share</p>
+      <h2 class="section-title reveal" style="--d:.05s">If a neighbor can spare it, Myci can pass it on.</h2>
+      <p class="section-lead reveal" style="--d:.1s">No cash changes hands. Just the everyday surplus a street already has, finally meeting the need next door.</p>
+      <div class="chips reveal" style="--d:.15s">
+        <span class="chip"><span class="dot" style="background:#E3A81B"></span>Spare food &amp; meals</span>
+        <span class="chip"><span class="dot" style="background:#7E9F56"></span>Tools to lend</span>
+        <span class="chip"><span class="dot" style="background:#1E8A80"></span>Skills &amp; teaching</span>
+        <span class="chip"><span class="dot" style="background:#D26A3A"></span>Barter &amp; swaps</span>
+        <span class="chip"><span class="dot" style="background:#E3A81B"></span>A free hour</span>
+        <span class="chip"><span class="dot" style="background:#7E9F56"></span>Repairs &amp; e-waste</span>
+        <span class="chip"><span class="dot" style="background:#1E8A80"></span>Rides &amp; childcare</span>
+        <span class="chip"><span class="dot" style="background:#D26A3A"></span>Spare energy</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Promises (the four criteria, said plainly) ─────────────────────── -->
+  <section class="band band-cocoa on-dark">
+    <div class="wrap">
+      <p class="eyebrow reveal">What we promise</p>
+      <h2 class="section-title reveal" style="--d:.05s">Made for everyone on the street.</h2>
+      <div class="principles">
+        <article class="principle reveal" style="--d:.05s">
+          <div class="ico">🌍</div>
+          <h3>Works on any street</h3>
+          <p>Place, language, and what people share are all just settings. Drop Myci into any neighborhood, anywhere, and it works.</p>
+          <p class="tick">Works worldwide</p>
+        </article>
+        <article class="principle reveal" style="--d:.12s">
+          <div class="ico">👵</div>
+          <h3>Easy at any age</h3>
+          <p>Big text, plain words, three taps to join. If you can send a text message, you can use Myci — at 12 or 92.</p>
+          <p class="tick">Any age, no manual</p>
+        </article>
+        <article class="principle reveal" style="--d:.19s">
+          <div class="ico">🌱</div>
+          <h3>Built to grow</h3>
+          <p>It works offline first and gets better the more your street uses it. Holds one block today or a city of ten thousand tomorrow.</p>
+          <p class="tick">Offline-first &amp; scales</p>
+        </article>
+        <article class="principle reveal" style="--d:.26s">
+          <div class="ico">🤝</div>
+          <h3>You're never the product</h3>
+          <p>No ads. We never sell your data, and your location is fuzzed — never a precise pin. Myci gives back to the people who show up.</p>
+          <p class="tick">No ads, no data resale</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── One street → every street ──────────────────────────────────────── -->
+  <section class="band band-green">
+    <div class="wrap pattern">
+      <p class="eyebrow reveal" style="color:#21300F">And then?</p>
+      <h2 class="section-title reveal" style="--d:.05s">Start with your street.<br />Any street can copy it.</h2>
+      <p class="section-lead center reveal" style="--d:.1s">Prove it on your block, and the same thing works next door — then the neighborhood, then anywhere. Small first, and then everywhere, the way mycelium spreads under a forest floor.</p>
+      <div class="grid-streets reveal" style="--d:.15s">
+        <span class="tile lit">Your street</span>
+        <span class="tile">+ next block</span>
+        <span class="tile">+ the neighborhood</span>
+        <span class="tile">+ the city</span>
+        <span class="tile">+ anywhere</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Final CTA ──────────────────────────────────────────────────────── -->
+  <section class="band band-amber">
+    <div class="wrap final">
+      <h2 class="reveal">Give a little.<br />Get a neighborhood.</h2>
+      <p class="reveal" style="--d:.08s">It takes one favor to start the thread.</p>
+      <a class="btn btn-teal btn-lg reveal" style="--d:.16s" href="/app">Join your neighborhood</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── Footer ───────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="wrap">
+    <span class="muted">Myci · borrow more, buy less, know your neighbors</span>
+    <nav class="links" aria-label="Footer">
+      <a href="/app">Open the app</a>
+      <a href="#how">How it works</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="#main">Top</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  // ── Living mycelium mesh — a faithful port of the app's MyceliumNet
+  // (myci-screens-intro.jsx): same node layout, nearest-neighbour edges,
+  // threadPath geometry, dashed amber "flow" threads and pulsing nodes.
+  (function buildNet() {
+    var host = document.getElementById('heroNet');
+    if (!host) return;
+
+    function threadPath(x1, y1, x2, y2, seed) {
+      var dx = x2 - x1, dy = y2 - y1;
+      var len = Math.hypot(dx, dy) || 1;
+      var nx = -dy / len, ny = dx / len;
+      var wobble = ((seed * 37) % 10) - 5;
+      var off = (len * 0.10) + wobble;
+      var c1x = x1 + dx * 0.3 + nx * off, c1y = y1 + dy * 0.3 + ny * off;
+      var c2x = x1 + dx * 0.7 + nx * off * 0.7, c2y = y1 + dy * 0.7 + ny * off * 0.7;
+      return 'M ' + x1 + ' ' + y1 + ' C ' + c1x + ' ' + c1y + ', ' + c2x + ' ' + c2y + ', ' + x2 + ' ' + y2;
+    }
+
+    var nodes = [
+      [12,9],[34,6],[55,11],[78,7],[92,15],
+      [6,25],[27,23],[47,27],[67,21],[87,29],
+      [15,41],[38,44],[58,39],[80,45],[95,39],
+      [9,57],[30,60],[50,55],[72,59],[90,57],
+      [19,73],[42,76],[62,71],[83,75],
+      [12,89],[34,92],[55,87],[76,91],[93,85]
+    ];
+    var edges = [], TH = 25;
+    for (var i = 0; i < nodes.length; i++) {
+      var cand = [];
+      for (var j = i + 1; j < nodes.length; j++) {
+        var d = Math.hypot(nodes[i][0] - nodes[j][0], nodes[i][1] - nodes[j][1]);
+        if (d < TH) cand.push([j, d]);
+      }
+      cand.sort(function (a, b) { return a[1] - b[1]; });
+      cand.slice(0, 3).forEach(function (c) { edges.push([i, c[0]]); });
+    }
+
+    var paths = edges.map(function (e, i) {
+      var a = e[0], b = e[1];
+      var d = threadPath(nodes[a][0], nodes[a][1], nodes[b][0], nodes[b][1], i + 1);
+      var grow = i % 9 === 4;
+      var flow = !grow && i % 3 === 0;
+      if (grow) return '<path class="myc-grow" d="' + d + '" fill="none" stroke="#E6BE3E" stroke-width="1.1" stroke-linecap="round" vector-effect="non-scaling-stroke" style="stroke-dasharray:560;stroke-dashoffset:0;opacity:.5;animation-delay:' + ((i % 7) * 1.7) + 's"/>';
+      if (flow) return '<path class="myc-flow" d="' + d + '" fill="none" stroke="#D6AD08" stroke-opacity=".45" stroke-width="1" stroke-linecap="round" stroke-dasharray="3 7" vector-effect="non-scaling-stroke" style="animation-duration:' + (3.2 + (i % 5) * 0.9) + 's"/>';
+      return '<path d="' + d + '" fill="none" stroke="#9c7d2e" stroke-opacity=".28" stroke-width="0.85" stroke-linecap="round" vector-effect="non-scaling-stroke"/>';
+    }).join('');
+
+    var svg = '<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible">' + paths + '</svg>';
+
+    var dots = nodes.map(function (n, i) {
+      var lit = i % 3 === 1;
+      var s = lit ? 7 : 5;
+      var style = 'position:absolute;left:' + n[0] + '%;top:' + n[1] + '%;width:' + s + 'px;height:' + s + 'px;'
+        + 'border-radius:50%;transform:translate(-50%,-50%);'
+        + 'background:' + (lit ? '#FEF4D6' : '#D6AD08') + ';'
+        + 'opacity:' + (lit ? 1 : 0.5) + ';'
+        + (lit ? 'box-shadow:0 0 7px 1px #f2c94c88;animation:nodePulse 3.6s ease-in-out infinite;animation-delay:' + ((i % 9) * 0.5) + 's;' : '');
+      return '<div style="' + style + '"></div>';
+    }).join('');
+
+    host.innerHTML = svg + dots;
+  })();
+</script>
+
+<script>
+  // Scroll-reveal — progressive enhancement; the page is complete without JS.
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window) ||
+        (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+      els.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+</script>
+</body>
+</html>

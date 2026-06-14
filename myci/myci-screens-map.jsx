@@ -30,7 +30,7 @@ function NeighborhoodBase() {
   ];
   return (
     <React.Fragment>
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
         {/* building blocks */}
         {blocks.map((b, i) => (
           <rect key={"b" + i} x={b[0]} y={b[1]} width={b[2]} height={b[3]} rx="3"
@@ -95,7 +95,7 @@ function MapScreen({ t, exchanges, onOpenProfile, onOpenPost, onOpenNotification
             </h1>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <button onClick={onOpenNotifications} style={{ position: "relative", background: "#FEF4D612", border: "1px solid #ffffff20", borderRadius: 10, width: 38, height: 38, cursor: "pointer", display: "grid", placeItems: "center" }}>
+            <button onClick={onOpenNotifications} aria-label={t("notif.title")} style={{ position: "relative", background: "#FEF4D612", border: "1px solid #ffffff20", borderRadius: 10, width: 44, height: 44, cursor: "pointer", display: "grid", placeItems: "center" }}>
               <Icon name="bell" size={17} style={{ color: "#FEF4D6" }} />
               <span style={{ position: "absolute", top: 7, right: 8, width: 8, height: 8, borderRadius: "50%", background: "#D6AD08", border: "1.5px solid #472C1C" }} />
             </button>
@@ -139,7 +139,7 @@ function MapScreen({ t, exchanges, onOpenProfile, onOpenPost, onOpenNotification
         {/* community resources */}
         {showResources && RESOURCES.map((r) => (
           <button key={r.id} onClick={() => setSel({ kind: "resource", data: r })}
-            style={{ ...nodeWrap(r.x, r.y), zIndex: 2 }}>
+            aria-label={r.name} style={{ ...nodeWrap(r.x, r.y), zIndex: 2 }}>
             <div style={{
               width: 26, height: 26, borderRadius: 7, background: "#E8DCC8",
               border: "1.5px solid #472C1C", display: "grid", placeItems: "center",
@@ -157,7 +157,7 @@ function MapScreen({ t, exchanges, onOpenProfile, onOpenPost, onOpenNotification
           const ox = n.x + 4.5, oy = n.y - 5.5;
           return (
             <button key={p.id} onClick={() => setSel({ kind: "post", data: p })}
-              style={{ ...nodeWrap(ox, oy), zIndex: 3 }}>
+              aria-label={p.title} style={{ ...nodeWrap(ox, oy), zIndex: 3 }}>
               <div style={{
                 width: 22, height: 22, borderRadius: "50% 50% 50% 2px",
                 background: ty.surface, border: p.type === "event" ? "1.5px solid #472C1C" : "none",
@@ -173,7 +173,7 @@ function MapScreen({ t, exchanges, onOpenProfile, onOpenPost, onOpenNotification
         {/* neighbor nodes */}
         {NEIGHBORS.map((n) => (
           <button key={n.id} onClick={() => setSel({ kind: "neighbor", data: n })}
-            style={{ ...nodeWrap(n.x, n.y), zIndex: 4 }}>
+            aria-label={n.you ? `${n.name} (you)` : n.name} style={{ ...nodeWrap(n.x, n.y), zIndex: 4 }}>
             <div style={{ position: "relative" }}>
               {n.you && <div style={{ position: "absolute", inset: -6, borderRadius: "50%", border: "2px solid #D6AD08", animation: "youPulse 2.4s ease-in-out infinite" }} />}
               <Avatar person={n} size={n.you ? 36 : 28} ring />
@@ -233,7 +233,7 @@ function PreviewSheet({ sel, onClose, onOpenProfile, onOpenPost }) {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontFamily: "'Trocchi', serif", fontSize: 18, color: "#2A1A0E" }}>{n.name}{n.you ? " (you)" : ""}</div>
           <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10.5, color: "#9a7a52", marginTop: 2 }}>
-            here {n.here} · gave {n.gave} · asked {n.asked}
+            {t("profile.here", { t: n.here })} · {t("profile.gave")} {n.gave} · {t("profile.asked")} {n.asked}
           </div>
           {theirs[0] && <div style={{ fontFamily: "'Cutive', serif", fontSize: 13, color: "#6a5238", marginTop: 4 }}>offering: {theirs[0].title}</div>}
         </div>
@@ -248,7 +248,7 @@ function PreviewSheet({ sel, onClose, onOpenProfile, onOpenPost }) {
         <div style={{ flex: 1, minWidth: 0 }}>
           <TypeTag type={p.type} small />
           <div style={{ fontFamily: "'Trocchi', serif", fontSize: 16, color: "#2A1A0E", marginTop: 4, lineHeight: 1.15 }}>{p.title}</div>
-          <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10, color: "#9a7a52", marginTop: 3 }}>{n.name} · {p.distance}</div>
+          <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10, color: "#9a7a52", marginTop: 3 }}>{n.name} · {formatDistance(parseFloat(p.distance))}</div>
         </div>
         <Btn small onClick={() => onOpenPost(p.id)}>Open</Btn>
       </div>
@@ -288,7 +288,7 @@ function PreviewSheet({ sel, onClose, onOpenProfile, onOpenPost }) {
     <div style={{ position: "absolute", left: 12, right: 12, bottom: 86, zIndex: 20 }}>
       <div style={{ position: "relative", background: "linear-gradient(180deg,#F3E8CF,#E8DCC8)", borderRadius: 16, padding: "15px 16px", boxShadow: "0 -2px 0 #fff6, 0 12px 30px rgba(0,0,0,.5)", border: "1px solid #fff7" }}>
         <Grain opacity={0.05} />
-        <button onClick={onClose} style={{ position: "absolute", top: 10, right: 10, background: "#472c1c14", border: "none", borderRadius: "50%", width: 24, height: 24, cursor: "pointer", display: "grid", placeItems: "center" }}>
+        <button onClick={onClose} aria-label={t("common.close")} style={{ position: "absolute", top: 10, right: 10, background: "#472c1c14", border: "none", borderRadius: "50%", width: 24, height: 24, cursor: "pointer", display: "grid", placeItems: "center" }}>
           <Icon name="x" weight="bold" size={12} style={{ color: "#6a5238" }} />
         </button>
         <div style={{ position: "relative" }}>{body}</div>

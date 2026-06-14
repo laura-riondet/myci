@@ -221,20 +221,29 @@ const DataService = {
   getNeighbors()        { return NEIGHBORS; },
   getNeighborById(id)   { return NEIGHBOR_BY_ID[id] || null; },
 
-  // Posts — filterable; perPage defaults to 50 (covers mock set; raise at API layer)
-  getPosts({ tabMatch, tags, radius, query, page = 0, perPage = 50 } = {}) {
+  // Pure filter over any post array (seed + live). Kept separate so the live
+  // layer (DataService.api.listPosts) can be merged in and filtered identically.
+  filterPosts(source, { tabMatch, tags, radius, query } = {}) {
     const q = (query || "").trim().toLowerCase();
     const blob = (p) =>
-      (p.tags.join(" ") + " " + p.typeLabel + " " + p.category + " " + p.type + " " + p.title).toLowerCase();
+      ((p.tags || []).join(" ") + " " + p.typeLabel + " " + p.category + " " + p.type + " " + p.title).toLowerCase();
     const dist = (p) => parseFloat(p.distance) || 0;
 
-    let results = POSTS;
-    if (tabMatch)   results = results.filter(tabMatch);
+    // de-dupe by id (live posts win over any seed collision)
+    const seen = new Set();
+    let results = source.filter((p) => (seen.has(p.id) ? false : seen.add(p.id)));
+
+    if (tabMatch)     results = results.filter(tabMatch);
     if (tags?.length) results = results.filter((p) => tags.some((kw) => blob(p).includes(kw)));
     if (radius != null && radius < 3) results = results.filter((p) => dist(p) <= radius);
-    if (q)          results = results.filter((p) => blob(p).includes(q) || p.body.toLowerCase().includes(q));
+    if (q)            results = results.filter((p) => blob(p).includes(q) || (p.body || "").toLowerCase().includes(q));
 
-    return this._paginate(results, page, perPage);
+    return results;
+  },
+
+  // Posts — filterable; perPage defaults to 50 (covers mock set; raise at API layer)
+  getPosts({ page = 0, perPage = 50, ...opts } = {}) {
+    return this._paginate(this.filterPosts(POSTS, opts), page, perPage);
   },
   getPostById(id) { return POST_BY_ID[id] || null; },
 
@@ -246,11 +255,133 @@ const DataService = {
 
   // Notifications
   getNotifications() { return NOTIFICATIONS; },
+
+  // ── Live layer (real backend) ──────────────────────────────────────────────
+  // Offline-first: screens render the seed instantly, then call these to fold
+  // in real posts neighbors have created. Failures are non-fatal — the app just
+  // shows the seed. See api/ for the serverless implementation.
+  // Promise chains (not async/await) so the in-browser Babel transform never
+  // needs a regenerator runtime — these run natively in every modern browser.
+  api: {
+    base: "/api",
+
+    listPosts({ type, query, page = 0, perPage = 50 } = {}) {
+      const qs = new URLSearchParams();
+      if (type && type !== "all") qs.set("type", type);
+      if (query) qs.set("q", query);
+      qs.set("page", page); qs.set("perPage", perPage);
+      return fetch(`${this.base}/posts?${qs}`).then((r) => {
+        if (!r.ok) throw new Error(`posts ${r.status}`);
+        return r.json(); // { items, total, hasMore }
+      });
+    },
+
+    createPost(payload) {
+      return fetch(`${this.base}/posts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }).then((r) =>
+        r.json().catch(() => ({})).then((data) => {
+          if (!r.ok) throw new Error(data.error || `create ${r.status}`);
+          return data.item;
+        })
+      );
+    },
+
+    health() {
+      return fetch(`${this.base}/health`).then((r) => {
+        if (!r.ok) throw new Error(`health ${r.status}`);
+        return r.json();
+      });
+    },
+  },
+
+  // ── Auth (passwordless magic-link) ─────────────────────────────────────────
+  // Identity is server-side: the session cookie is httpOnly, so the browser
+  // never holds a token it could leak. credentials:"same-origin" sends the
+  // cookie with each call. See api/auth/* for the implementation.
+  auth: {
+    base: "/api/auth",
+
+    // Ask the server to email a sign-in link. In dev (no email provider) the
+    // response carries devLink so the flow is testable without a mailbox.
+    requestLink(email) {
+      return fetch(`${this.base}/request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      }).then((r) =>
+        r.json().catch(() => ({})).then((data) => {
+          if (!r.ok) throw new Error(data.error || `request ${r.status}`);
+          return data; // { ok, devLink? }
+        })
+      );
+    },
+
+    // Who am I? Resolves to a user object or null. Never throws.
+    me() {
+      return fetch(`${this.base}/me`, { credentials: "same-origin" })
+        .then((r) => r.json())
+        .then((d) => d.user || null)
+        .catch(() => null);
+    },
+
+    logout() {
+      return fetch(`${this.base}/logout`, { method: "POST", credentials: "same-origin" })
+        .then(() => true).catch(() => false);
+    },
+  },
+
+  // ── Account (data sovereignty: take it or erase it) ────────────────────────
+  account: {
+    base: "/api/account",
+
+    // Returns the full JSON the server holds about you — for the Settings export.
+    exportData() {
+      return fetch(`${this.base}/export`, { credentials: "same-origin" })
+        .then((r) => {
+          if (!r.ok) throw new Error(`export ${r.status}`);
+          return r.json();
+        });
+    },
+
+    // Erase the account and all its posts. Irreversible.
+    deleteAccount() {
+      return fetch(`${this.base}/delete`, { method: "POST", credentials: "same-origin" })
+        .then((r) => {
+          if (!r.ok) throw new Error(`delete ${r.status}`);
+          return r.json();
+        });
+    },
+  },
 };
+
+// Resolve a person for display: a static neighbor, the signed-in user, or a
+// self-contained author carried on a live post. Keeps the UI working whether a
+// post came from the seed roster or a real signed-in neighbor.
+function personFor(post, me) {
+  if (!post) return null;
+  const seed = NEIGHBOR_BY_ID[post.authorId];
+  if (seed) return seed;
+  if (me && post.authorId === me.id) {
+    return { id: me.id, name: me.name, first: (me.name || "You").split(" ")[0], initials: initialsOf(me.name), tone: "#D6AD08", you: true };
+  }
+  if (post.authorName) {
+    return { id: post.authorId, name: post.authorName, first: post.authorName.split(" ")[0], initials: post.authorInitials || initialsOf(post.authorName), tone: "#8CA679" };
+  }
+  return NEIGHBOR_BY_ID.you;
+}
+
+function initialsOf(name) {
+  const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "··";
+  return (parts[0][0] + (parts[1] ? parts[1][0] : "")).toUpperCase();
+}
 
 // ── Expose to window (prototype uses global scope via Babel) ─────────────────
 Object.assign(window, {
   NEIGHBORHOOD, NEIGHBORS, NEIGHBOR_BY_ID, POST_TYPES,
   POSTS, POST_BY_ID, SEED_EXCHANGES, MESSAGES, NOTIFICATIONS,
-  DataService, ex,
+  DataService, ex, personFor,
 });

@@ -18,6 +18,9 @@ const REACH_PREFILL = {
 
 function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const i18n = useI18n();
+  const tr = i18n.t;
+  const auth = useAuth();
   const [view, setView] = useState({ screen: "landing", anim: "fade", seq: 0 });
   const histRef = useRef([]);
   const seqRef = useRef(0);
@@ -31,6 +34,31 @@ function App() {
     document.documentElement.style.setProperty("--accent", t.accent);
   }, [t.accent]);
 
+  // Handle the magic-link return (api/auth/verify redirects to /app?auth=…).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const a = params.get("auth");
+    if (!a) return;
+    if (a === "ok") {
+      auth.refresh().then(() => {
+        DataService.auth.me().then((u) => flash(tr("auth.welcome", { name: (u && u.name) || "" })));
+      });
+      tab("feed");
+    } else if (a === "expired") flash(tr("auth.expired"));
+    else if (a === "error") flash(tr("auth.error"));
+    // strip the query so a refresh doesn't re-trigger
+    window.history.replaceState({}, "", window.location.pathname);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // A gate for actions that need a signed-in neighbor. Returns true if allowed;
+  // otherwise routes to sign-in with a contextual reason and returns false.
+  function requireAuth(reason) {
+    if (auth.user) return true;
+    go("signin", { reason }, "modal");
+    return false;
+  }
+
   function nav(next, anim) { seqRef.current += 1; setView({ ...next, anim, seq: seqRef.current }); }
   function go(screen, params = {}, anim = "push") { histRef.current.push(view); nav({ screen, ...params }, anim); }
   function back() { const p = histRef.current.pop(); nav(p || { screen: "feed" }, "pop"); }
@@ -39,6 +67,7 @@ function App() {
   function flash(msg) { setToast(msg); clearTimeout(flash._t); flash._t = setTimeout(() => setToast(null), 2600); }
 
   function reachOut(post) {
+    if (!requireAuth(tr("post.reachOut"))) return;
     const n = NEIGHBOR_BY_ID[post.authorId];
     let convo = convos.find((c) => c.withId === post.authorId && c.postId === post.id);
     if (!convo) {
@@ -69,20 +98,23 @@ function App() {
   const mainTabs = ["feed", "map", "messages"];
   const showChrome = mainTabs.includes(s) || (s === "profile" && view.personId === "you");
   const openNotifs = () => go("notifications");
+  const startCompose = () => { if (requireAuth(tr("compose.signInFirst"))) go("compose", {}, "modal"); };
 
   return (
-    <div className={t.grain ? "" : "grainoff"} style={{ position: "absolute", inset: 0, overflow: "hidden", fontFamily: "'Trocchi', serif" }}>
-      {/* status bar */}
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 30, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px", pointerEvents: "none" }}>
-        <span style={{ fontFamily: "'Cutive', serif", fontSize: 13, color: "#FEF4D6", fontWeight: 600 }}>9:41</span>
-        <span style={{ display: "flex", gap: 6, alignItems: "center", color: "#FEF4D6" }}>
-          <Icon name="cell-signal-full" size={13} /><Icon name="wifi-high" size={13} /><Icon name="battery-high" size={15} />
-        </span>
-      </div>
+    <div className={t.grain ? "" : "grainoff"} dir={i18n.dir} style={{ position: "absolute", inset: 0, overflow: "hidden", fontFamily: "'Trocchi', serif" }}>
+      {/* status bar — hidden on the landing hero for a clean first impression */}
+      {s !== "landing" && (
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 30, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px", pointerEvents: "none" }}>
+          <span style={{ fontFamily: "'Cutive', serif", fontSize: 13, color: "#FEF4D6", fontWeight: 600 }}>9:41</span>
+          <span style={{ display: "flex", gap: 6, alignItems: "center", color: "#FEF4D6" }}>
+            <Icon name="cell-signal-full" size={13} /><Icon name="wifi-high" size={13} /><Icon name="battery-high" size={15} />
+          </span>
+        </div>
+      )}
 
       {/* animated screen container — re-keys on each navigation */}
       <div key={view.seq} className={`screen-anim anim-${view.anim}`} style={{ position: "absolute", inset: 0 }}>
-        {s === "landing" && <LandingScreen onJoin={() => nav({ screen: "onboarding" }, "fade")} />}
+        {s === "landing" && <LandingScreen onJoin={() => nav({ screen: "onboarding" }, "fade")} onSignIn={() => go("signin", {}, "modal")} onGuest={() => tab("feed")} />}
         {s === "onboarding" && <OnboardingScreen onDone={() => tab("feed")} />}
         {s === "feed" && <FeedScreen t={t} onOpen={(p) => go("post", { post: p })} onOpenNotifications={openNotifs} onSheet={setSheetOpen} />}
         {s === "map" && <MapScreen t={t} exchanges={exchanges} onOpenProfile={(id) => go("profile", { personId: id })} onOpenPost={(id) => go("post", { post: POST_BY_ID[id] })} onOpenNotifications={openNotifs} />}
@@ -93,10 +125,11 @@ function App() {
         {s === "thread" && currentConvo && <ThreadScreen convo={currentConvo} onBack={back} onComplete={completeExchange} completed={!!completed[currentConvo.id]} />}
         {s === "notifications" && <NotificationsScreen onBack={back} onOpenPost={(id) => go("post", { post: POST_BY_ID[id] })} />}
         {s === "settings" && <SettingsScreen onBack={back} />}
+        {s === "signin" && <SignInScreen onBack={back} reason={view.reason} />}
       </div>
 
       {/* bottom nav + FAB */}
-      {showChrome && !sheetOpen && <BottomNav active={s === "profile" ? "you" : s} onTab={tab} onCompose={() => go("compose", {}, "modal")} />}
+      {showChrome && !sheetOpen && <BottomNav active={s === "profile" ? "you" : s} onTab={tab} onCompose={startCompose} />}
 
       {/* toast */}
       {toast && (
@@ -118,12 +151,13 @@ function App() {
 }
 
 function BottomNav({ active, onTab, onCompose }) {
+  const { t: tr } = useI18n();
   const items = [
-    { id: "feed", icon: "scroll", label: "Commons" },
-    { id: "map", icon: "compass", label: "Map" },
-    { id: "compose", icon: "plus", label: "Share", fab: true },
-    { id: "messages", icon: "chat-circle", label: "Messages" },
-    { id: "you", icon: "user", label: "Me" },
+    { id: "feed", icon: "scroll", label: tr("nav.commons") },
+    { id: "map", icon: "compass", label: tr("nav.map") },
+    { id: "compose", icon: "plus", label: tr("nav.share"), fab: true },
+    { id: "messages", icon: "chat-circle", label: tr("nav.messages") },
+    { id: "you", icon: "user", label: tr("nav.me") },
   ];
   return (
     <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 50, background: "linear-gradient(180deg,#3A2A1E,#2e2016)", borderTop: "1px solid #ffffff12", padding: "9px 12px 24px", display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
@@ -148,4 +182,8 @@ function BottomNav({ active, onTab, onCompose }) {
   );
 }
 
-ReactDOM.createRoot(document.getElementById("app")).render(<App />);
+ReactDOM.createRoot(document.getElementById("app")).render(
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+);

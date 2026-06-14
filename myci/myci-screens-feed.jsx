@@ -30,6 +30,7 @@ const FILTER_TAGS = [
 ];
 
 function FeedScreen({ t, onOpen, onOpenNotifications, onSheet }) {
+  const { t: tr, formatDistance } = useI18n();
   const [tab, setTab]           = useState("all");
   const [radius, setRadius]     = useState(3);
   const [tags, setTags]         = useState([]);
@@ -42,10 +43,23 @@ function FeedScreen({ t, onOpen, onOpenNotifications, onSheet }) {
 
   const activeTab = useMemo(() => FEED_TABS.find((x) => x.id === tab) || FEED_TABS[0], [tab]);
 
-  // DataService returns { items, total, hasMore } — ready for infinite scroll later
-  const { items: list } = useMemo(
-    () => DataService.getPosts({ tabMatch: activeTab.match, tags, radius, query }),
-    [activeTab, tags, radius, query],
+  // Offline-first: the seed below renders immediately. On mount we fold in any
+  // real posts neighbors have created via the API. If the call fails (offline,
+  // no backend configured), we simply keep the seed — the Commons still works.
+  const [livePosts, setLivePosts] = useState([]);
+  useEffect(() => {
+    let alive = true;
+    DataService.api.listPosts({ perPage: 100 })
+      .then((res) => { if (alive) setLivePosts(res.items || []); })
+      .catch(() => { /* seed-only is a valid state */ });
+    return () => { alive = false; };
+  }, []);
+
+  // Merge live (newest) ahead of seed, then filter identically. filterPosts
+  // de-dupes by id, so this is ready for real pagination as the network grows.
+  const list = useMemo(
+    () => DataService.filterPosts([...livePosts, ...POSTS], { tabMatch: activeTab.match, tags, radius, query }),
+    [livePosts, activeTab, tags, radius, query],
   );
 
   const activeCount = tags.length + (radius < 3 ? 1 : 0) + (query.trim() ? 1 : 0);
@@ -58,19 +72,19 @@ function FeedScreen({ t, onOpen, onOpenNotifications, onSheet }) {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative" }}>
           <div>
             <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10.5, letterSpacing: ".2em", color: "#D6AD08", textTransform: "uppercase" }}>
-              The Commons
+              {tr("feed.commons")}
             </div>
             <h1 style={{ fontFamily: "var(--display)", fontSize: 24, color: "#FEF4D6", margin: "3px 0 0", letterSpacing: ".01em" }}>
               {NEIGHBORHOOD}
             </h1>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={onOpenNotifications} style={iconBtnStyle}>
+            <button onClick={onOpenNotifications} aria-label={tr("notif.title")} style={iconBtnStyle}>
               <Icon name="bell" size={17} style={{ color: "#FEF4D6" }} />
               <span style={{ position: "absolute", top: 7, right: 8, width: 8, height: 8, borderRadius: "50%", background: "#D6AD08", border: "1.5px solid #472C1C" }} />
             </button>
             <button onClick={openSheet} style={{ ...iconBtnStyle, width: "auto", padding: "0 12px", gap: 6, display: "flex", alignItems: "center", color: "#E8DCC8", fontFamily: "'Cutive', serif", fontSize: 13 }}>
-              <Icon name="sliders-horizontal" size={16} style={{ color: "#D6AD08" }} /> Filters
+              <Icon name="sliders-horizontal" size={16} style={{ color: "#D6AD08" }} /> {tr("feed.filters")}
               {activeCount > 0 && (
                 <span style={{ background: "#D6AD08", color: "#3A2410", fontFamily: "'Cutive Mono', monospace", fontSize: 10, fontWeight: 700, borderRadius: 9, padding: "1px 6px" }}>
                   {activeCount}
@@ -93,7 +107,7 @@ function FeedScreen({ t, onOpen, onOpenNotifications, onSheet }) {
                 border: on ? "none" : "1px solid #ffffff14",
                 boxShadow: on ? "0 2px 5px rgba(0,0,0,.3)" : "none",
                 transition: "all .12s",
-              }}>{x.label}</button>
+              }}>{tr("feed.tab." + x.id)}</button>
             );
           })}
         </div>
@@ -102,15 +116,15 @@ function FeedScreen({ t, onOpen, onOpenNotifications, onSheet }) {
       {/* ── Active-filter summary strip ── */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 18px", background: "#E0D2B8", borderBottom: "1px solid #472c1c1a", flexShrink: 0, overflowX: "auto" }} className="no-scrollbar">
         <span style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 11, color: "#7a5a38", whiteSpace: "nowrap" }}>
-          {list.length} posts
+          {list.length} {tr(list.length === 1 ? "common.post" : "common.posts")}
         </span>
         {activeCount === 0 ? (
           <span style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 11, color: "#a98f68", whiteSpace: "nowrap" }}>
-            · all categories, within reach
+            {tr("feed.allCategories")}
           </span>
         ) : (
           <div style={{ display: "flex", gap: 6 }}>
-            {radius < 3 && <SummaryPill onClear={() => setRadius(3)}>within {radius} mi</SummaryPill>}
+            {radius < 3 && <SummaryPill onClear={() => setRadius(3)}>{tr("feed.within", { d: formatDistance(radius) })}</SummaryPill>}
             {query.trim() && <SummaryPill onClear={() => setQuery("")}>"{query}"</SummaryPill>}
             {tags.map((kw) => {
               const tg = FILTER_TAGS.find((f) => f.kw === kw);
@@ -137,17 +151,17 @@ function FeedScreen({ t, onOpen, onOpenNotifications, onSheet }) {
           ) : (
             <div style={{ textAlign: "center", padding: "50px 20px", fontFamily: "'Cutive', serif", color: "#8a6f4a" }}>
               <Icon name="leaf" size={34} style={{ color: "#b9a273", opacity: 0.6 }} />
-              <p style={{ fontSize: 15, marginTop: 12 }}>Nothing matches those filters yet.</p>
+              <p style={{ fontSize: 15, marginTop: 12 }}>{tr("feed.empty")}</p>
               <button
                 onClick={() => { setTags([]); setRadius(3); setQuery(""); }}
                 style={{ marginTop: 4, background: "none", border: "none", color: "#B27500", fontFamily: "'Cutive', serif", fontSize: 14, cursor: "pointer", textDecoration: "underline" }}
-              >Clear filters</button>
+              >{tr("feed.clearFilters")}</button>
             </div>
           )}
         </div>
         {list.length > 0 && (
           <div style={{ textAlign: "center", marginTop: 26, fontFamily: "'Cutive Mono', monospace", fontSize: 10.5, color: "#9a7a52" }}>
-            · you've reached the edge of {NEIGHBORHOOD} ·
+            {tr("feed.edge", { place: NEIGHBORHOOD })}
           </div>
         )}
       </div>
@@ -171,16 +185,17 @@ function FeedScreen({ t, onOpen, onOpenNotifications, onSheet }) {
 
 const iconBtnStyle = {
   position: "relative", background: "#FEF4D612", border: "1px solid #ffffff20",
-  borderRadius: 10, height: 38, width: 38, cursor: "pointer", display: "grid", placeItems: "center",
+  borderRadius: 10, height: 44, width: 44, cursor: "pointer", display: "grid", placeItems: "center",
 };
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function SummaryPill({ children, onClear }) {
+  const { t: tr } = useI18n();
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: 5, background: "#D6AD0826", border: "1px solid #b2750040", color: "#7a5a38", fontFamily: "'Cutive Mono', monospace", fontSize: 10.5, padding: "3px 6px 3px 9px", borderRadius: 14, whiteSpace: "nowrap" }}>
       {children}
-      <button onClick={onClear} style={{ background: "none", border: "none", cursor: "pointer", display: "grid", placeItems: "center", padding: 0 }}>
+      <button onClick={onClear} aria-label={tr("common.close")} style={{ background: "none", border: "none", cursor: "pointer", display: "grid", placeItems: "center", padding: 0 }}>
         <Icon name="x" weight="bold" size={9} style={{ color: "#9a7a52" }} />
       </button>
     </span>
@@ -188,6 +203,7 @@ function SummaryPill({ children, onClear }) {
 }
 
 function FilterSheet({ tags, setTags, radius, setRadius, query, setQuery, count, onClose, onClear }) {
+  const { t: tr, formatDistance } = useI18n();
   const toggle = (kw) => setTags(tags.includes(kw) ? tags.filter((x) => x !== kw) : [...tags, kw]);
   return (
     <div style={{ position: "absolute", inset: 0, zIndex: 40 }}>
@@ -199,8 +215,8 @@ function FilterSheet({ tags, setTags, radius, setRadius, query, setQuery, count,
       }}>
         <div style={{ width: 40, height: 5, borderRadius: 3, background: "#472c1c2a", margin: "0 auto 14px" }} />
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <h2 style={{ fontFamily: "'Trocchi', serif", fontWeight: 400, fontSize: 21, color: "#2A1A0E", margin: 0 }}>Filter the Commons</h2>
-          <button onClick={onClose} style={{ background: "#472c1c14", border: "none", borderRadius: "50%", width: 30, height: 30, cursor: "pointer", display: "grid", placeItems: "center" }}>
+          <h2 style={{ fontFamily: "'Trocchi', serif", fontWeight: 400, fontSize: 21, color: "#2A1A0E", margin: 0 }}>{tr("feed.filterTitle")}</h2>
+          <button onClick={onClose} aria-label={tr("common.close")} style={{ background: "#472c1c14", border: "none", borderRadius: "50%", width: 30, height: 30, cursor: "pointer", display: "grid", placeItems: "center" }}>
             <Icon name="x" weight="bold" size={13} style={{ color: "#6a5238" }} />
           </button>
         </div>
@@ -211,13 +227,14 @@ function FilterSheet({ tags, setTags, radius, setRadius, query, setQuery, count,
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search posts…"
+            placeholder={tr("feed.search")}
+            aria-label={tr("feed.search")}
             style={{ flex: 1, border: "none", background: "none", outline: "none", fontFamily: "'Trocchi', serif", fontSize: 15, color: "#2A1A0E" }}
           />
         </div>
 
         {/* Category chips */}
-        <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "#8a6f4a", margin: "20px 0 10px" }}>Categories</div>
+        <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "#8a6f4a", margin: "20px 0 10px" }}>{tr("feed.categories")}</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
           {FILTER_TAGS.map((f) => {
             const on = tags.includes(f.kw);
@@ -233,19 +250,19 @@ function FilterSheet({ tags, setTags, radius, setRadius, query, setQuery, count,
         </div>
 
         {/* Distance — tucked inside the filter sheet */}
-        <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "#8a6f4a", margin: "22px 0 10px" }}>Distance</div>
+        <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 11, letterSpacing: ".12em", textTransform: "uppercase", color: "#8a6f4a", margin: "22px 0 10px" }}>{tr("feed.distance")}</div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <Icon name="map-pin" size={16} style={{ color: "#B27500" }} />
           <input type="range" min="0.3" max="3" step="0.1" value={radius} onChange={(e) => setRadius(+e.target.value)} style={{ flex: 1, accentColor: "#B27500" }} />
           <span style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 12, color: "#5a4329", whiteSpace: "nowrap", minWidth: 56, textAlign: "right" }}>
-            {radius >= 3 ? "any" : `${radius} mi`}
+            {radius >= 3 ? tr("feed.any") : formatDistance(radius)}
           </span>
         </div>
 
         {/* Actions */}
         <div style={{ display: "flex", gap: 10, marginTop: 26 }}>
-          <Btn kind="ghost" onClick={onClear} style={{ flex: 1 }}>Clear all</Btn>
-          <Btn onClick={onClose} style={{ flex: 2 }}>Show {count} {count === 1 ? "post" : "posts"}</Btn>
+          <Btn kind="ghost" onClick={onClear} style={{ flex: 1 }}>{tr("common.clearAll")}</Btn>
+          <Btn onClick={onClose} style={{ flex: 2 }}>{tr("feed.show", { n: count, posts: tr(count === 1 ? "common.post" : "common.posts") })}</Btn>
         </div>
       </div>
     </div>

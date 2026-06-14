@@ -15,9 +15,11 @@
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
 
+<!-- Shared design system (palette tokens, fonts, grain, keyframes) -->
+<link rel="stylesheet" href="globals.css" />
+
 <style>
-  * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; }
+  html, body { height: 100%; }
   body {
     background:
       radial-gradient(120% 90% at 50% 0%, #2e2016 0%, #1c130b 70%, #140d07 100%);
@@ -26,7 +28,6 @@
     text-rendering: optimizeLegibility;
     overflow: hidden;
   }
-  :root { --accent: #D6AD08; --display: 'Alfa Slab One', serif; }
 
   /* ── Fit-to-viewport stage ── */
   #stage {
@@ -80,20 +81,7 @@
   input, textarea, button { font-family: inherit; }
   input::placeholder, textarea::placeholder { color: #a98f68; }
 
-  /* ── Keyframes ── */
-  @keyframes growThread   { from { stroke-dashoffset: 120; } to { stroke-dashoffset: 0; } }
-  @keyframes youPulse     { 0%,100% { opacity: .45; transform: scale(1); } 50% { opacity: 1; transform: scale(1.14); } }
-  @keyframes toastIn      { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-  @keyframes slideInRight { from { transform: translateX(34px); } to { transform: none; } }
-  @keyframes slideInLeft  { from { transform: translateX(-34px); } to { transform: none; } }
-  @keyframes fadeUp       { from { transform: translateY(14px); } to { transform: none; } }
-  @keyframes slideUpScale { from { transform: translateY(44px) scale(.96); } to { transform: none; } }
-  @keyframes riseUp       { from { transform: translateY(9px); } to { transform: none; } }
-  @keyframes sheetUp      { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  @keyframes fadeIn       { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes mycFlow      { to { stroke-dashoffset: -20; } }
-  @keyframes mycGrow      { 0% { stroke-dashoffset: 560; opacity: 0; } 8% { opacity: .5; } 42% { stroke-dashoffset: 0; opacity: .5; } 90% { stroke-dashoffset: 0; opacity: .5; } 100% { stroke-dashoffset: 0; opacity: 0; } }
-  @keyframes nodePulse    { 0%,100% { opacity: .5; transform: translate(-50%,-50%) scale(1); } 50% { opacity: 1; transform: translate(-50%,-50%) scale(1.5); } }
+  /* Shared keyframes live in globals.css. App-specific transitions below. */
 
   /* ── Screen transitions (transform-only: content always visible at rest) ── */
   .screen-anim { animation-duration: .34s; animation-timing-function: cubic-bezier(.22,.61,.36,1); animation-fill-mode: both; }
@@ -188,7 +176,9 @@
   -->
   <script type="text/babel" src="tweaks-panel.jsx"></script>
   <script type="text/babel" src="myci-data.jsx"></script>
+  <script type="text/babel" src="myci-i18n.jsx"></script>
   <script type="text/babel" src="myci-ui.jsx"></script>
+  <script type="text/babel" src="myci-auth-ui.jsx"></script>
   <script type="text/babel" src="myci-postcard.jsx"></script>
   <script type="text/babel" src="myci-screens-intro.jsx"></script>
   <script type="text/babel" src="myci-screens-feed.jsx"></script>

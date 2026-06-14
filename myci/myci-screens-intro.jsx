@@ -96,7 +96,8 @@ function MyceliumNet() {
   );
 }
 
-function LandingScreen({ onJoin }) {
+function LandingScreen({ onJoin, onSignIn, onGuest }) {
+  const { t } = useI18n();
   return (
     <div style={{
       position: "absolute", inset: 0, background: "#472C1C",
@@ -122,36 +123,69 @@ function LandingScreen({ onJoin }) {
 
       <Grain opacity={0.08} />
 
-      <div style={{ position: "relative", paddingTop: 92, textAlign: "center" }}>
-        <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 11, letterSpacing: ".34em", color: "#D6AD08", textTransform: "uppercase" }}>
-          Fernwood · est. now
-        </div>
-      </div>
+      {/* top spacer keeps the wordmark centered on the brown gradient */}
+      <div style={{ paddingTop: 92 }} />
 
       <div style={{ position: "relative", textAlign: "center", padding: "0 30px", marginBottom: 8 }}>
         <h1 style={{
           fontFamily: "var(--display)", fontSize: 74, color: "#FEF4D6",
           margin: 0, letterSpacing: ".005em", lineHeight: 0.95,
           textShadow: "0 3px 0 #2a1a0e, 0 7px 22px rgba(0,0,0,.5)",
-        }}>MYCI</h1>
+        }}>Myci</h1>
         <p style={{
           fontFamily: "'Cutive', serif", fontSize: 17, color: "#E8DCC8",
           margin: "18px auto 0", maxWidth: 320, lineHeight: 1.5,
         }}>
-          The network beneath<br />your street.<br />
-          <span style={{ color: "#cbb085" }}>Give first. Grow together.</span>
+          {t("landing.tagline1")}<br />{t("landing.tagline2")}
         </p>
       </div>
 
-      <div style={{ position: "relative", width: "100%", padding: "0 28px 46px", boxSizing: "border-box" }}>
+      <div style={{ position: "relative", width: "100%", padding: "0 28px 40px", boxSizing: "border-box" }}>
         <Btn full icon="sparkle" onClick={onJoin} style={{ fontSize: 17, padding: "16px" }}>
-          Join your neighborhood
+          {t("landing.join")}
         </Btn>
-        <p style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10.5, color: "#b79a6e", textAlign: "center", marginTop: 14 }}>
-          no precise location · no money · just neighbors
+
+        {/* Guest path — judges & curious neighbors can look around with no account */}
+        {onGuest && (
+          <button onClick={onGuest} style={{
+            width: "100%", marginTop: 12, padding: "13px", cursor: "pointer",
+            background: "#FEF4D610", border: "1px solid #ffffff2e", borderRadius: 12,
+            color: "#E8DCC8", fontFamily: "'Cutive', serif", fontSize: 15,
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+          }}>
+            <Icon name="binoculars" size={17} style={{ color: "#D6AD08" }} /> {t("landing.guest")}
+          </button>
+        )}
+
+        {onSignIn && (
+          <button onClick={onSignIn} style={{
+            display: "block", margin: "14px auto 0", background: "none", border: "none", cursor: "pointer",
+            fontFamily: "'Cutive', serif", fontSize: 14.5, color: "#E8DCC8", minHeight: 44,
+          }}>
+            {t("landing.signin")}
+          </button>
+        )}
+
+        <p style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10.5, color: "#b79a6e", textAlign: "center", marginTop: 10 }}>
+          {t("landing.note")}
         </p>
+        <LegalLine />
       </div>
     </div>
+  );
+}
+
+// Shared Terms / Privacy line — opens the static legal pages in a new tab.
+function LegalLine() {
+  const { t } = useI18n();
+  const link = { color: "#cbb085", textDecoration: "underline" };
+  return (
+    <p style={{ fontFamily: "'Cutive', serif", fontSize: 10.5, color: "#9a8260", textAlign: "center", marginTop: 12, lineHeight: 1.5 }}>
+      {t("legal.agreePre")}{" "}
+      <a href="/terms" target="_blank" rel="noopener noreferrer" style={link}>{t("legal.terms")}</a>{" "}
+      {t("legal.and")}{" "}
+      <a href="/privacy" target="_blank" rel="noopener noreferrer" style={link}>{t("legal.privacy")}</a>.
+    </p>
   );
 }
 
@@ -160,6 +194,7 @@ const GIVE_CHIPS = ["Cooking", "Gardening", "Tools to lend", "Repairs", "Childca
 const CURIOUS_CHIPS = ["Woodworking", "Bread baking", "Bike repair", "Painting", "Composting", "A new language", "Foraging", "Pottery", "Beekeeping", "Knitting"];
 
 function OnboardingScreen({ onDone }) {
+  const { t } = useI18n();
   const [step, setStep] = useState(0);
   const [give, setGive] = useState(["Spare produce", "A spare hour"]);
   const [curious, setCurious] = useState(["Woodworking"]);
@@ -180,12 +215,12 @@ function OnboardingScreen({ onDone }) {
       <div style={{ flex: 1, overflowY: "auto", padding: "30px 28px 20px", position: "relative" }}>
         {step === 0 && (
           <div>
-            <Eyebrow>Step 1 · Where you are</Eyebrow>
-            <Headline>Which patch of ground is yours?</Headline>
-            <Sub>Approximate only. We fuzz your spot by ±500m — never a precise pin.</Sub>
+            <Eyebrow>{t("ob.step1")}</Eyebrow>
+            <Headline>{t("ob.where")}</Headline>
+            <Sub>{t("ob.whereSub")}</Sub>
             <div style={{ marginTop: 24 }}>
-              <FakeField icon="map-pin" label="Neighborhood" value="Fernwood" />
-              <FakeField icon="city" label="City" value="Riverside" />
+              <FakeField icon="map-pin" label={t("ob.neighborhood")} value="Fernwood" />
+              <FakeField icon="city" label={t("ob.city")} value="Riverside" />
               <div style={{
                 marginTop: 16, borderRadius: 14, overflow: "hidden", height: 150, position: "relative",
                 border: "1px solid #ffffff14",
@@ -197,17 +232,17 @@ function OnboardingScreen({ onDone }) {
         )}
         {step === 1 && (
           <div>
-            <Eyebrow>Step 2 · Give first</Eyebrow>
-            <Headline>What can you give your neighbors?</Headline>
-            <Sub>This comes first on purpose. You arrive as a giver, not a taker.</Sub>
+            <Eyebrow>{t("ob.step2")}</Eyebrow>
+            <Headline>{t("ob.give")}</Headline>
+            <Sub>{t("ob.giveSub")}</Sub>
             <ChipField options={GIVE_CHIPS} selected={give} onToggle={(v) => toggle(give, setGive, v)} tone="var(--accent)" />
           </div>
         )}
         {step === 2 && (
           <div>
-            <Eyebrow>Step 3 · Stay curious</Eyebrow>
-            <Headline>What would you love to learn?</Headline>
-            <Sub>Curiosity, not need. We'll nudge you toward neighbors who teach it.</Sub>
+            <Eyebrow>{t("ob.step3")}</Eyebrow>
+            <Headline>{t("ob.curious")}</Headline>
+            <Sub>{t("ob.curiousSub")}</Sub>
             <ChipField options={CURIOUS_CHIPS} selected={curious} onToggle={(v) => toggle(curious, setCurious, v)} tone="#8CA679" />
           </div>
         )}
@@ -218,12 +253,12 @@ function OnboardingScreen({ onDone }) {
           <button onClick={() => setStep(step - 1)} style={{
             background: "none", border: "none", cursor: "pointer", color: "#b79a6e",
             fontFamily: "'Cutive', serif", fontSize: 15, padding: "10px 4px",
-          }}>Back</button>
+          }}>{t("common.back")}</button>
         )}
         <div style={{ flex: 1 }} />
         <Btn icon={step === 2 ? "check" : "arrow-right"}
           onClick={() => (step === 2 ? onDone({ give, curious }) : setStep(step + 1))}>
-          {step === 2 ? "Enter the Commons" : "Next"}
+          {step === 2 ? t("ob.enter") : t("common.next")}
         </Btn>
       </div>
     </div>
@@ -275,6 +310,7 @@ function ChipField({ options, selected, onToggle, tone }) {
 
 // a tiny static mycelium-on-soil map used in onboarding
 function MiniMapField() {
+  const { t } = useI18n();
   return (
     <div style={{ position: "absolute", inset: 0, background: "radial-gradient(130% 100% at 40% 20%, #6f5436, #4a3722)" }}>
       <Grain opacity={0.1} />
@@ -286,9 +322,9 @@ function MiniMapField() {
           <circle key={i} cx={p[0]} cy={p[1]} r={i === 1 ? 2.6 : 1.6} fill={i === 1 ? "#D6AD08" : "#E8DCC8"} />
         ))}
       </svg>
-      <div style={{ position: "absolute", left: "55%", top: "45%", transform: "translate(-50%,-160%)", fontFamily: "'Cutive Mono', monospace", fontSize: 9, color: "#FEF4D6", background: "#2a1a0eaa", padding: "2px 6px", borderRadius: 4 }}>you, roughly</div>
+      <div style={{ position: "absolute", left: "55%", top: "45%", transform: "translate(-50%,-160%)", fontFamily: "'Cutive Mono', monospace", fontSize: 9, color: "#FEF4D6", background: "#2a1a0eaa", padding: "2px 6px", borderRadius: 4 }}>{t("ob.youRoughly")}</div>
     </div>
   );
 }
 
-Object.assign(window, { LandingScreen, OnboardingScreen, MyceliumBloom });
+Object.assign(window, { LandingScreen, OnboardingScreen, MyceliumBloom, LegalLine });

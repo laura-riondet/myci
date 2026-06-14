@@ -13,11 +13,15 @@ function seedOf(id) {
 }
 
 function PostCard({ post, onOpen, cardStyle = "pinned", stickerStyle = "blob", index = 0 }) {
-  const author = NEIGHBOR_BY_ID[post.authorId];
+  const { user } = useAuth();
+  const { t: tr, formatDistance } = useI18n();
+  const author = personFor(post, user);   // resolves seed neighbors + live authors
   const t = POST_TYPES[post.type];
   const seed = seedOf(post.id);
   const event = post.type === "event";
   const rot = cardStyle === "pinned" ? ((seed % 5) - 2) * 0.55 : 0;
+  const distVal = parseFloat(post.distance);
+  const distDisplay = Number.isNaN(distVal) ? post.distance : formatDistance(distVal);
 
   const surface = {
     position: "relative", borderRadius: 16, padding: "16px 16px 14px",
@@ -29,7 +33,10 @@ function PostCard({ post, onOpen, cardStyle = "pinned", stickerStyle = "blob", i
   };
 
   return (
-    <article onClick={() => onOpen(post)} style={surface}>
+    <article onClick={() => onOpen(post)} role="button" tabIndex={0}
+      aria-label={`${post.typeLabel}: ${post.title}`}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(post); } }}
+      style={surface}>
       <Grain opacity={0.05} />
       {/* pushpin for pinned style */}
       {cardStyle === "pinned" && (
@@ -93,12 +100,12 @@ function PostCard({ post, onOpen, cardStyle = "pinned", stickerStyle = "blob", i
           </div>
           <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10, color: "#9a7a52", marginTop: 2 }}>
             <Icon name="map-pin" weight="bold" size={10} style={{ marginRight: 3, verticalAlign: "-1px" }} />
-            {post.distance} · {post.when}
+            {distDisplay} · {post.when}
           </div>
         </div>
         <Btn small kind={event ? "dark" : post.type === "request" || post.type === "mutual_aid" ? "sage" : "primary"}
           onClick={(e) => { e.stopPropagation(); onOpen(post, true); }}>
-          {ctaFor(post.type)}
+          {tr("post.reachOut")}
         </Btn>
       </div>
     </article>
