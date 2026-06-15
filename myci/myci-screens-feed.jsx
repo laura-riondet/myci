@@ -15,18 +15,19 @@ const FEED_TABS = [
   { id: "aid",      label: "Mutual Aid", match: (p) => p.type === "mutual_aid" },
 ];
 
+// tkey → i18n key; kw → keyword matched against a post's searchable blob.
 const FILTER_TAGS = [
-  { label: "Surplus",    kw: "surplus"  },
-  { label: "Skill Share",kw: "skill"    },
-  { label: "Tools",      kw: "tool"     },
-  { label: "Food",       kw: "food"     },
-  { label: "Gardening",  kw: "garden"   },
-  { label: "Crafts",     kw: "craft"    },
-  { label: "Barter",     kw: "barter"   },
-  { label: "Events",     kw: "event"    },
-  { label: "Mutual Aid", kw: "mutual"   },
-  { label: "Free",       kw: "free"     },
-  { label: "Repair",     kw: "repair"   },
+  { tkey: "filter.surplus",   kw: "surplus"  },
+  { tkey: "filter.skill",     kw: "skill"    },
+  { tkey: "filter.tools",     kw: "tool"     },
+  { tkey: "filter.food",      kw: "food"     },
+  { tkey: "filter.gardening", kw: "garden"   },
+  { tkey: "filter.crafts",    kw: "craft"    },
+  { tkey: "filter.barter",    kw: "barter"   },
+  { tkey: "filter.events",    kw: "event"    },
+  { tkey: "filter.mutual",    kw: "mutual"   },
+  { tkey: "filter.free",      kw: "free"     },
+  { tkey: "filter.repair",    kw: "repair"   },
 ];
 
 function FeedScreen({ t, onOpen, onOpenNotifications, onSheet }) {
@@ -74,7 +75,7 @@ function FeedScreen({ t, onOpen, onOpenNotifications, onSheet }) {
             <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10.5, letterSpacing: ".2em", color: "#D6AD08", textTransform: "uppercase" }}>
               {tr("feed.commons")}
             </div>
-            <h1 style={{ fontFamily: "var(--display)", fontSize: 24, color: "#FEF4D6", margin: "3px 0 0", letterSpacing: ".01em" }}>
+            <h1 style={{ fontFamily: "var(--display)", fontWeight: "normal", fontSize: 24, color: "#FEF4D6", margin: "3px 0 0", letterSpacing: ".01em" }}>
               {NEIGHBORHOOD}
             </h1>
           </div>
@@ -130,7 +131,7 @@ function FeedScreen({ t, onOpen, onOpenNotifications, onSheet }) {
               const tg = FILTER_TAGS.find((f) => f.kw === kw);
               return (
                 <SummaryPill key={kw} onClear={() => setTags(tags.filter((x) => x !== kw))}>
-                  {tg ? tg.label : kw}
+                  {tg ? tr(tg.tkey) : kw}
                 </SummaryPill>
               );
             })}
@@ -244,7 +245,7 @@ function FilterSheet({ tags, setTags, radius, setRadius, query, setQuery, count,
                 background: on ? "var(--accent)" : "#fff6", color: on ? "#3A2410" : "#5a4329",
                 border: on ? "none" : "1px solid #472c1c22",
                 boxShadow: on ? "0 2px 5px rgba(30,16,6,.25)" : "none", transition: "all .12s",
-              }}>{on ? "✓ " : ""}{f.label}</button>
+              }}>{on ? "✓ " : ""}{tr(f.tkey)}</button>
             );
           })}
         </div>

@@ -379,9 +379,44 @@ function initialsOf(name) {
   return (parts[0][0] + (parts[1] ? parts[1][0] : "")).toUpperCase();
 }
 
+// ── Countries (ISO 3166-1 alpha-2) ───────────────────────────────────────────
+// We keep only the 2-letter codes and let Intl.DisplayNames render the names in
+// the user's chosen language — so the picker localizes for free (universality).
+// The code is also exactly what Nominatim wants for `countrycodes=` scoping,
+// which is what makes a bare postcode search actually resolve.
+const COUNTRY_CODES = [
+  "AF","AX","AL","DZ","AS","AD","AO","AI","AG","AR","AM","AW","AU","AT","AZ","BS","BH","BD","BB",
+  "BY","BE","BZ","BJ","BM","BT","BO","BA","BW","BR","BN","BG","BF","BI","KH","CM","CA","CV","KY",
+  "CF","TD","CL","CN","CO","KM","CG","CD","CR","CI","HR","CU","CW","CY","CZ","DK","DJ","DM","DO",
+  "EC","EG","SV","GQ","ER","EE","SZ","ET","FJ","FI","FR","GF","PF","GA","GM","GE","DE","GH","GI",
+  "GR","GL","GD","GP","GU","GT","GG","GN","GW","GY","HT","HN","HK","HU","IS","IN","ID","IR","IQ",
+  "IE","IM","IL","IT","JM","JP","JE","JO","KZ","KE","KI","KP","KR","KW","KG","LA","LV","LB","LS",
+  "LR","LY","LI","LT","LU","MO","MG","MW","MY","MV","ML","MT","MH","MQ","MR","MU","YT","MX","FM",
+  "MD","MC","MN","ME","MS","MA","MZ","MM","NA","NR","NP","NL","NC","NZ","NI","NE","NG","MK","NO",
+  "OM","PK","PW","PS","PA","PG","PY","PE","PH","PL","PT","PR","QA","RE","RO","RU","RW","WS","SM",
+  "ST","SA","SN","RS","SC","SL","SG","SX","SK","SI","SB","SO","ZA","SS","ES","LK","SD","SR","SE",
+  "CH","SY","TW","TJ","TZ","TH","TL","TG","TO","TT","TN","TR","TM","TC","TV","UG","UA","AE","GB",
+  "US","UY","UZ","VU","VA","VE","VN","VG","VI","YE","ZM","ZW",
+];
+
+// [{ code, name }] sorted by localized name. Falls back to the raw code if the
+// browser lacks Intl.DisplayNames or can't name a region.
+function countryList(locale) {
+  let dn = null;
+  try { dn = new Intl.DisplayNames([locale || "en"], { type: "region" }); } catch (e) { dn = null; }
+  return COUNTRY_CODES
+    .map((code) => {
+      let name = code;
+      try { name = (dn && dn.of(code)) || code; } catch (e) { name = code; }
+      return { code, name };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
 // ── Expose to window (prototype uses global scope via Babel) ─────────────────
 Object.assign(window, {
   NEIGHBORHOOD, NEIGHBORS, NEIGHBOR_BY_ID, POST_TYPES,
   POSTS, POST_BY_ID, SEED_EXCHANGES, MESSAGES, NOTIFICATIONS,
   DataService, ex, personFor,
+  COUNTRY_CODES, countryList,
 });

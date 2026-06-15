@@ -98,33 +98,24 @@ function App() {
   const mainTabs = ["feed", "map", "messages"];
   const showChrome = mainTabs.includes(s) || (s === "profile" && view.personId === "you");
   const openNotifs = () => go("notifications");
-  const startCompose = () => { if (requireAuth(tr("compose.signInFirst"))) go("compose", {}, "modal"); };
+  // Demo: the compose flow is open to guests so the + can be shown without an account.
+  const startCompose = () => go("compose", {}, "modal");
 
   return (
     <div className={t.grain ? "" : "grainoff"} dir={i18n.dir} style={{ position: "absolute", inset: 0, overflow: "hidden", fontFamily: "'Trocchi', serif" }}>
-      {/* status bar — hidden on the landing hero for a clean first impression */}
-      {s !== "landing" && (
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 30, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 20px", pointerEvents: "none" }}>
-          <span style={{ fontFamily: "'Cutive', serif", fontSize: 13, color: "#FEF4D6", fontWeight: 600 }}>9:41</span>
-          <span style={{ display: "flex", gap: 6, alignItems: "center", color: "#FEF4D6" }}>
-            <Icon name="cell-signal-full" size={13} /><Icon name="wifi-high" size={13} /><Icon name="battery-high" size={15} />
-          </span>
-        </div>
-      )}
-
       {/* animated screen container — re-keys on each navigation */}
       <div key={view.seq} className={`screen-anim anim-${view.anim}`} style={{ position: "absolute", inset: 0 }}>
         {s === "landing" && <LandingScreen onJoin={() => nav({ screen: "onboarding" }, "fade")} onSignIn={() => go("signin", {}, "modal")} onGuest={() => tab("feed")} />}
-        {s === "onboarding" && <OnboardingScreen onDone={() => tab("feed")} />}
+        {s === "onboarding" && <OnboardingScreen onDone={() => tab("feed")} onBack={() => nav({ screen: "landing" }, "fade")} />}
         {s === "feed" && <FeedScreen t={t} onOpen={(p) => go("post", { post: p })} onOpenNotifications={openNotifs} onSheet={setSheetOpen} />}
-        {s === "map" && <MapScreen t={t} exchanges={exchanges} onOpenProfile={(id) => go("profile", { personId: id })} onOpenPost={(id) => go("post", { post: POST_BY_ID[id] })} onOpenNotifications={openNotifs} />}
+        {s === "map" && <MapScreen exchanges={exchanges} onOpenProfile={(id) => go("profile", { personId: id })} onOpenPost={(id) => go("post", { post: POST_BY_ID[id] })} onOpenNotifications={openNotifs} />}
         {s === "post" && <PostDetailScreen post={view.post} onBack={back} onReachOut={reachOut} onOpenProfile={(id) => go("profile", { personId: id })} />}
         {s === "compose" && <ComposeScreen onBack={back} onPosted={() => tab("feed")} />}
         {s === "profile" && <ProfileScreen personId={view.personId} exchanges={exchanges} onBack={view.personId === "you" ? null : back} onOpenPost={(id) => go("post", { post: POST_BY_ID[id] })} onOpenSettings={() => go("settings")} onOpenNotifications={openNotifs} />}
         {s === "messages" && <MessagesScreen convos={convos} onOpenThread={(id) => go("thread", { threadId: id })} onOpenNotifications={openNotifs} />}
         {s === "thread" && currentConvo && <ThreadScreen convo={currentConvo} onBack={back} onComplete={completeExchange} completed={!!completed[currentConvo.id]} />}
         {s === "notifications" && <NotificationsScreen onBack={back} onOpenPost={(id) => go("post", { post: POST_BY_ID[id] })} />}
-        {s === "settings" && <SettingsScreen onBack={back} />}
+        {s === "settings" && <SettingsScreen onBack={back} onSignedOut={() => tab("landing")} />}
         {s === "signin" && <SignInScreen onBack={back} reason={view.reason} />}
       </div>
 

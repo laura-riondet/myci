@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Myci — borrow more, buy less, know your neighbors</title>
-<meta name="description" content="Myci is the give-first mutual-aid network for your street. Share tools, time, food and skills with the neighbors you already have. No money, no precise location, no ads." />
+<title data-i18n="meta.title">Myci — borrow more, buy less, know your neighbors</title>
+<meta name="description" data-i18n-attr="content=meta.desc" content="Myci is the give-first mutual-aid network for your street. Share tools, time, food and skills with the neighbors you already have. No money, no precise location, no ads." />
 
 <meta property="og:title" content="Myci — borrow more, buy less, know your neighbors" />
 <meta property="og:description" content="The give-first network for your street. Connect a surplus to a need on one block, then let it grow." />
@@ -20,7 +20,7 @@
 </head>
 <body class="landing">
 
-<a class="skip" href="#main">Skip to content</a>
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
 
 <!-- ── Header ───────────────────────────────────────────────────────────── -->
 <header class="site-header">
@@ -44,7 +44,10 @@
       </svg>
       <span class="logo-word">Myci</span>
     </a>
-    <a class="btn btn-primary btn-sm" href="/app">Open the app</a>
+    <div class="header-actions">
+      <div data-lang-switch></div>
+      <a class="btn btn-primary btn-sm" href="/app" data-i18n="nav.openApp">Open the app</a>
+    </div>
   </div>
 </header>
 
@@ -75,15 +78,15 @@
           </g>
         </svg>
       </span>
-      <p class="eyebrow anim d1">Mutual aid, one street at a time</p>
+      <p class="eyebrow anim d1" data-i18n="hero.eyebrow">Mutual aid, one street at a time</p>
       <h1 class="anim d1">Myci</h1>
-      <p class="tagline anim d2">Borrow more. Buy less.<br />Know your neighbors.</p>
-      <p class="subline anim d3">The give-first network for your street — share tools, time, food and skills with the people you already live beside.</p>
+      <p class="tagline anim d2" data-i18n-html="hero.tagline">Borrow more. Buy less.<br />Know your neighbors.</p>
+      <p class="subline anim d3" data-i18n="hero.subline">The give-first network for your street — share tools, time, food and skills with the people you already live beside.</p>
       <div class="hero-cta anim d4">
-        <a class="btn btn-primary btn-lg" href="/app">Join your neighborhood</a>
-        <a class="btn btn-outline btn-lg" href="#how">See how it works</a>
+        <a class="btn btn-primary btn-lg" href="/app" data-i18n="hero.join">Join your neighborhood</a>
+        <a class="btn btn-outline btn-lg" href="#how" data-i18n="hero.see">See how it works</a>
       </div>
-      <p class="hero-note anim d5">no money · no ads · just neighbors</p>
+      <p class="hero-note anim d5" data-i18n="hero.note">no money · no ads · just neighbors</p>
     </div>
   </section>
 
@@ -91,14 +94,14 @@
   <section class="band band-paper">
     <div class="wrap split-grid">
       <div>
-        <p class="eyebrow reveal">Why Myci</p>
-        <h2 class="section-title reveal" style="--d:.05s">Your neighbor has a drill you need.<br />You have the ladder they keep borrowing.</h2>
-        <p class="section-lead reveal" style="--d:.1s">A good drill sits in one garage while three people down the street each buy their own. Spare tomatoes go soft two doors from someone who'd happily cook them. The things your street needs are already on your street.</p>
-        <p class="punch-line reveal" style="--d:.18s"><span class="hl">Myci just helps you find each other.</span></p>
+        <p class="eyebrow reveal" data-i18n="why.eyebrow">Why Myci</p>
+        <h2 class="section-title reveal" style="--d:.05s" data-i18n-html="why.title">Your neighbor has a drill you need.<br />You have the ladder they keep borrowing.</h2>
+        <p class="section-lead reveal" style="--d:.1s" data-i18n="why.lead">A good drill sits in one garage while three people down the street each buy their own. Spare tomatoes go soft two doors from someone who'd happily cook them. The things your street needs are already on your street.</p>
+        <p class="punch-line reveal" style="--d:.18s" data-i18n-html="why.punch"><span class="hl">Myci just helps you find each other.</span></p>
       </div>
 
       <div class="reveal reveal-r" style="--d:.12s">
-        <svg class="illus" viewBox="0 0 440 360" role="img" aria-label="Two houses on a street connected by an underground mycelium thread, sharing a tomato and a book">
+        <svg class="illus" viewBox="0 0 440 360" role="img" data-i18n-attr="aria-label=why.illusAlt" aria-label="Two houses on a street connected by an underground mycelium thread, sharing a tomato and a book">
           <g stroke="#33231A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
             <!-- sun -->
             <g stroke="#E3A81B" stroke-width="3">
@@ -169,14 +172,14 @@
     <div class="wrap">
       <div class="counter">
         <div class="stat-card stat-doom reveal reveal-l">
-          <p class="stat-kicker">The doom statistic</p>
-          <p class="stat-big">3 in 5</p>
-          <p class="stat-label">of us can't name three neighbors on our own street.</p>
+          <p class="stat-kicker" data-i18n="stat.doomKicker">The doom statistic</p>
+          <p class="stat-big" data-i18n="stat.doomBig">3 in 5</p>
+          <p class="stat-label" data-i18n="stat.doomLabel">of us can't name three neighbors on our own street.</p>
         </div>
         <div class="stat-card stat-proof reveal reveal-r" style="--d:.1s">
-          <p class="stat-kicker">The counter-proof</p>
-          <p class="stat-big">One favor</p>
-          <p class="stat-label">is all it takes to change that. Lend the drill, share the tomatoes — the rest tends to follow.</p>
+          <p class="stat-kicker" data-i18n="stat.proofKicker">The counter-proof</p>
+          <p class="stat-big" data-i18n="stat.proofBig">One favor</p>
+          <p class="stat-label" data-i18n="stat.proofLabel">is all it takes to change that. Lend the drill, share the tomatoes — the rest tends to follow.</p>
         </div>
       </div>
     </div>
@@ -185,7 +188,7 @@
   <!-- ── Why the name "Myci" ────────────────────────────────────────────── -->
   <section class="band band-cocoa on-dark" id="name">
     <div class="wrap center">
-      <p class="eyebrow reveal">Why &ldquo;Myci&rdquo;?</p>
+      <p class="eyebrow reveal" data-i18n-html="name.eyebrow">Why &ldquo;Myci&rdquo;?</p>
       <div class="name-word reveal" style="--d:.05s" aria-label="Myci">Myci</div>
       <p class="name-blend reveal" style="--d:.1s">
         <span><b class="nb-myc">myc</b>elium</span>
@@ -196,38 +199,38 @@
         <article class="name-card reveal" style="--d:.05s">
           <div class="ico">🍄</div>
           <h3><b class="nb-myc">Myc</b>elium</h3>
-          <p>The underground web of threads that links a whole forest — quietly passing food and signals from tree to tree, so nothing goes to waste and nobody goes without. It's how a neighborhood already works, once you can see it.</p>
+          <p data-i18n="name.mycBody">The underground web of threads that links a whole forest — quietly passing food and signals from tree to tree, so nothing goes to waste and nobody goes without. It's how a neighborhood already works, once you can see it.</p>
         </article>
         <article class="name-card city reveal" style="--d:.12s">
           <div class="ico">📍</div>
           <h3><b class="nb-city">My ci</b>ty</h3>
-          <p>And it's yours — my city, my street, my block. Hyperlocal by design, so the help is always a short walk away, never an app full of strangers across town.</p>
+          <p data-i18n="name.cityBody">And it's yours — my city, my street, my block. Hyperlocal by design, so the help is always a short walk away, never an app full of strangers across town.</p>
         </article>
       </div>
-      <p class="name-foot reveal" style="--d:.18s">A living network, rooted right where you live.</p>
+      <p class="name-foot reveal" style="--d:.18s" data-i18n="name.foot">A living network, rooted right where you live.</p>
     </div>
   </section>
 
   <!-- ── How it works ───────────────────────────────────────────────────── -->
   <section class="band band-teal on-dark" id="how">
     <div class="wrap">
-      <p class="eyebrow reveal">How it works</p>
-      <h2 class="section-title reveal" style="--d:.05s">Three taps from stranger to neighbor.</h2>
+      <p class="eyebrow reveal" data-i18n="how.eyebrow">How it works</p>
+      <h2 class="section-title reveal" style="--d:.05s" data-i18n="how.title">Three taps from stranger to neighbor.</h2>
       <div class="steps">
         <article class="step reveal" style="--d:.05s">
           <div class="step-num">1</div>
-          <h3>Give first</h3>
-          <p>Start by offering something — a tool to lend, a skill, spare veg, a free hour. You arrive as a giver, not a taker.</p>
+          <h3 data-i18n="how.s1t">Give first</h3>
+          <p data-i18n="how.s1b">Start by offering something — a tool to lend, a skill, spare veg, a free hour. You arrive as a giver, not a taker.</p>
         </article>
         <article class="step reveal" style="--d:.15s">
           <div class="step-num">2</div>
-          <h3>Find a match</h3>
-          <p>See what neighbors nearby are offering and asking for: food, tools, skills, rides, energy — even e-waste.</p>
+          <h3 data-i18n="how.s2t">Find a match</h3>
+          <p data-i18n="how.s2b">See what neighbors nearby are offering and asking for: food, tools, skills, rides, energy — even e-waste.</p>
         </article>
         <article class="step reveal" style="--d:.25s">
           <div class="step-num">3</div>
-          <h3>Watch it grow</h3>
-          <p>Every swap draws a thread between two homes on your map. The more your street shares, the more it can find.</p>
+          <h3 data-i18n="how.s3t">Watch it grow</h3>
+          <p data-i18n="how.s3b">Every swap draws a thread between two homes on your map. The more your street shares, the more it can find.</p>
         </article>
       </div>
     </div>
@@ -236,18 +239,18 @@
   <!-- ── What you can share ─────────────────────────────────────────────── -->
   <section class="band band-paper">
     <div class="wrap">
-      <p class="eyebrow reveal">What you can share</p>
-      <h2 class="section-title reveal" style="--d:.05s">If a neighbor can spare it, Myci can pass it on.</h2>
-      <p class="section-lead reveal" style="--d:.1s">No cash changes hands. Just the everyday surplus a street already has, finally meeting the need next door.</p>
+      <p class="eyebrow reveal" data-i18n="share.eyebrow">What you can share</p>
+      <h2 class="section-title reveal" style="--d:.05s" data-i18n="share.title">If a neighbor can spare it, Myci can pass it on.</h2>
+      <p class="section-lead reveal" style="--d:.1s" data-i18n="share.lead">No cash changes hands. Just the everyday surplus a street already has, finally meeting the need next door.</p>
       <div class="chips reveal" style="--d:.15s">
-        <span class="chip"><span class="dot" style="background:#E3A81B"></span>Spare food &amp; meals</span>
-        <span class="chip"><span class="dot" style="background:#7E9F56"></span>Tools to lend</span>
-        <span class="chip"><span class="dot" style="background:#1E8A80"></span>Skills &amp; teaching</span>
-        <span class="chip"><span class="dot" style="background:#D26A3A"></span>Barter &amp; swaps</span>
-        <span class="chip"><span class="dot" style="background:#E3A81B"></span>A free hour</span>
-        <span class="chip"><span class="dot" style="background:#7E9F56"></span>Repairs &amp; e-waste</span>
-        <span class="chip"><span class="dot" style="background:#1E8A80"></span>Rides &amp; childcare</span>
-        <span class="chip"><span class="dot" style="background:#D26A3A"></span>Spare energy</span>
+        <span class="chip"><span class="dot" style="background:#E3A81B"></span><span data-i18n="share.c1">Spare food &amp; meals</span></span>
+        <span class="chip"><span class="dot" style="background:#7E9F56"></span><span data-i18n="share.c2">Tools to lend</span></span>
+        <span class="chip"><span class="dot" style="background:#1E8A80"></span><span data-i18n="share.c3">Skills &amp; teaching</span></span>
+        <span class="chip"><span class="dot" style="background:#D26A3A"></span><span data-i18n="share.c4">Barter &amp; swaps</span></span>
+        <span class="chip"><span class="dot" style="background:#E3A81B"></span><span data-i18n="share.c5">A free hour</span></span>
+        <span class="chip"><span class="dot" style="background:#7E9F56"></span><span data-i18n="share.c6">Repairs &amp; e-waste</span></span>
+        <span class="chip"><span class="dot" style="background:#1E8A80"></span><span data-i18n="share.c7">Rides &amp; childcare</span></span>
+        <span class="chip"><span class="dot" style="background:#D26A3A"></span><span data-i18n="share.c8">Spare energy</span></span>
       </div>
     </div>
   </section>
@@ -255,32 +258,32 @@
   <!-- ── Promises (the four criteria, said plainly) ─────────────────────── -->
   <section class="band band-cocoa on-dark">
     <div class="wrap">
-      <p class="eyebrow reveal">What we promise</p>
-      <h2 class="section-title reveal" style="--d:.05s">Made for everyone on the street.</h2>
+      <p class="eyebrow reveal" data-i18n="promise.eyebrow">What we promise</p>
+      <h2 class="section-title reveal" style="--d:.05s" data-i18n="promise.title">Made for everyone on the street.</h2>
       <div class="principles">
         <article class="principle reveal" style="--d:.05s">
           <div class="ico">🌍</div>
-          <h3>Works on any street</h3>
-          <p>Place, language, and what people share are all just settings. Drop Myci into any neighborhood, anywhere, and it works.</p>
-          <p class="tick">Works worldwide</p>
+          <h3 data-i18n="promise.p1t">Works on any street</h3>
+          <p data-i18n="promise.p1b">Place, language, and what people share are all just settings. Drop Myci into any neighborhood, anywhere, and it works.</p>
+          <p class="tick" data-i18n="promise.p1k">Works worldwide</p>
         </article>
         <article class="principle reveal" style="--d:.12s">
           <div class="ico">👵</div>
-          <h3>Easy at any age</h3>
-          <p>Big text, plain words, three taps to join. If you can send a text message, you can use Myci — at 12 or 92.</p>
-          <p class="tick">Any age, no manual</p>
+          <h3 data-i18n="promise.p2t">Easy at any age</h3>
+          <p data-i18n="promise.p2b">Big text, plain words, three taps to join. If you can send a text message, you can use Myci — at 12 or 92.</p>
+          <p class="tick" data-i18n="promise.p2k">Any age, no manual</p>
         </article>
         <article class="principle reveal" style="--d:.19s">
           <div class="ico">🌱</div>
-          <h3>Built to grow</h3>
-          <p>It works offline first and gets better the more your street uses it. Holds one block today or a city of ten thousand tomorrow.</p>
-          <p class="tick">Offline-first &amp; scales</p>
+          <h3 data-i18n="promise.p3t">Built to grow</h3>
+          <p data-i18n="promise.p3b">It works offline first and gets better the more your street uses it. Holds one block today or a city of ten thousand tomorrow.</p>
+          <p class="tick" data-i18n="promise.p3k">Offline-first &amp; scales</p>
         </article>
         <article class="principle reveal" style="--d:.26s">
           <div class="ico">🤝</div>
-          <h3>You're never the product</h3>
-          <p>No ads. We never sell your data, and your location is fuzzed — never a precise pin. Myci gives back to the people who show up.</p>
-          <p class="tick">No ads, no data resale</p>
+          <h3 data-i18n="promise.p4t">You're never the product</h3>
+          <p data-i18n="promise.p4b">No ads. We never sell your data, and your location is fuzzed — never a precise pin. Myci gives back to the people who show up.</p>
+          <p class="tick" data-i18n="promise.p4k">No ads, no data resale</p>
         </article>
       </div>
     </div>
@@ -289,15 +292,15 @@
   <!-- ── One street → every street ──────────────────────────────────────── -->
   <section class="band band-green">
     <div class="wrap pattern">
-      <p class="eyebrow reveal" style="color:#21300F">And then?</p>
-      <h2 class="section-title reveal" style="--d:.05s">Start with your street.<br />Any street can copy it.</h2>
-      <p class="section-lead center reveal" style="--d:.1s">Prove it on your block, and the same thing works next door — then the neighborhood, then anywhere. Small first, and then everywhere, the way mycelium spreads under a forest floor.</p>
+      <p class="eyebrow reveal" style="color:#21300F" data-i18n="pattern.eyebrow">And then?</p>
+      <h2 class="section-title reveal" style="--d:.05s" data-i18n-html="pattern.title">Start with your street.<br />Any street can copy it.</h2>
+      <p class="section-lead center reveal" style="--d:.1s" data-i18n="pattern.lead">Prove it on your block, and the same thing works next door — then the neighborhood, then anywhere. Small first, and then everywhere, the way mycelium spreads under a forest floor.</p>
       <div class="grid-streets reveal" style="--d:.15s">
-        <span class="tile lit">Your street</span>
-        <span class="tile">+ next block</span>
-        <span class="tile">+ the neighborhood</span>
-        <span class="tile">+ the city</span>
-        <span class="tile">+ anywhere</span>
+        <span class="tile lit" data-i18n="pattern.t1">Your street</span>
+        <span class="tile" data-i18n="pattern.t2">+ next block</span>
+        <span class="tile" data-i18n="pattern.t3">+ the neighborhood</span>
+        <span class="tile" data-i18n="pattern.t4">+ the city</span>
+        <span class="tile" data-i18n="pattern.t5">+ anywhere</span>
       </div>
     </div>
   </section>
@@ -305,9 +308,9 @@
   <!-- ── Final CTA ──────────────────────────────────────────────────────── -->
   <section class="band band-amber">
     <div class="wrap final">
-      <h2 class="reveal">Give a little.<br />Get a neighborhood.</h2>
-      <p class="reveal" style="--d:.08s">It takes one favor to start the thread.</p>
-      <a class="btn btn-teal btn-lg reveal" style="--d:.16s" href="/app">Join your neighborhood</a>
+      <h2 class="reveal" data-i18n-html="final.title">Give a little.<br />Get a neighborhood.</h2>
+      <p class="reveal" style="--d:.08s" data-i18n="final.sub">It takes one favor to start the thread.</p>
+      <a class="btn btn-teal btn-lg reveal" style="--d:.16s" href="/app" data-i18n="final.cta">Join your neighborhood</a>
     </div>
   </section>
 
@@ -316,13 +319,13 @@
 <!-- ── Footer ───────────────────────────────────────────────────────────── -->
 <footer class="site-footer">
   <div class="wrap">
-    <span class="muted">Myci · borrow more, buy less, know your neighbors</span>
+    <span class="muted" data-i18n="footer.tagline">Myci · borrow more, buy less, know your neighbors</span>
     <nav class="links" aria-label="Footer">
-      <a href="/app">Open the app</a>
-      <a href="#how">How it works</a>
-      <a href="/privacy">Privacy</a>
-      <a href="/terms">Terms</a>
-      <a href="#main">Top</a>
+      <a href="/app" data-i18n="footer.openApp">Open the app</a>
+      <a href="#how" data-i18n="footer.how">How it works</a>
+      <a href="/privacy" data-i18n="footer.privacy">Privacy</a>
+      <a href="/terms" data-i18n="footer.terms">Terms</a>
+      <a href="#main" data-i18n="footer.top">Top</a>
     </nav>
   </div>
 </footer>
@@ -409,5 +412,8 @@
     els.forEach(function (el) { io.observe(el); });
   })();
 </script>
+
+<!-- Public-page i18n + language switcher (shares the app's myci.lang) -->
+<script src="landing-i18n.js"></script>
 </body>
 </html>

@@ -96,21 +96,52 @@ function MyceliumNet() {
   );
 }
 
+// Brand logo mark — four colored mycelium threads meeting at a seed.
+// Faithful port of the lockup mark on the landing page (index.html).
+function LogoMark({ size = 54 }) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden width={size} height={size} style={{ display: "block" }}>
+      <g strokeLinecap="round">
+        <path d="M24 24 C18 20 13 15 8 12"  stroke="#1E8A80" strokeWidth="2.4" />
+        <path d="M24 24 C31 19 36 14 40 10" stroke="#7E9F56" strokeWidth="2.4" />
+        <path d="M24 24 C19 30 14 35 10 40" stroke="#D26A3A" strokeWidth="2.4" />
+        <path d="M24 24 C31 31 36 35 40 38" stroke="#E3A81B" strokeWidth="2.4" />
+      </g>
+      <g>
+        <circle cx="8"  cy="12" r="3" fill="#1E8A80" />
+        <circle cx="40" cy="10" r="3" fill="#7E9F56" />
+        <circle cx="10" cy="40" r="3" fill="#D26A3A" />
+        <circle cx="40" cy="38" r="3" fill="#E3A81B" />
+        <circle cx="24" cy="24" r="5" fill="#FBF3DE" />
+        <circle cx="24" cy="24" r="2.6" fill="#E3A81B" />
+      </g>
+    </svg>
+  );
+}
+
+// Landing fonts — the same faces the public landing page (index.html) uses,
+// so the in-app landing reads as one brand.
+const LF = {
+  wordmark: "'Super Mellow', 'Fraunces', Georgia, serif",
+  display:  "'Fraunces', Georgia, serif",
+  body:     "'Hanken Grotesk', system-ui, sans-serif",
+  mono:     "'Space Mono', ui-monospace, monospace",
+};
+
 function LandingScreen({ onJoin, onSignIn, onGuest }) {
   const { t } = useI18n();
   return (
     <div style={{
-      position: "absolute", inset: 0, background: "#472C1C",
-      display: "flex", flexDirection: "column", alignItems: "center",
-      justifyContent: "space-between", overflow: "hidden",
+      position: "absolute", inset: 0,
+      display: "flex", flexDirection: "column",
+      justifyContent: "space-between", overflow: "hidden", color: "#FBF3DE",
+      background:
+        "radial-gradient(80% 60% at 18% 8%, rgba(30,138,128,.34) 0%, transparent 55%)," +
+        "radial-gradient(70% 60% at 92% 96%, rgba(210,106,58,.30) 0%, transparent 55%)," +
+        "radial-gradient(110% 90% at 50% 40%, #3C2517 0%, #2E1B11 60%, #20120A 100%)",
     }}>
-      <div style={{
-        position: "absolute", inset: 0, background:
-          "radial-gradient(120% 70% at 50% 8%, #5a3a24 0%, #472C1C 46%, #3A2A1E 100%)",
-      }} />
-
       {/* interconnected living network */}
-      <div style={{ position: "absolute", inset: 0 }}>
+      <div style={{ position: "absolute", inset: 0, opacity: 0.72 }}>
         <MyceliumNet />
       </div>
 
@@ -118,55 +149,67 @@ function LandingScreen({ onJoin, onSignIn, onGuest }) {
       <div aria-hidden style={{
         position: "absolute", left: "50%", top: "47%", transform: "translate(-50%,-50%)",
         width: 640, height: 540, pointerEvents: "none",
-        background: "radial-gradient(ellipse 46% 40% at 50% 50%, rgba(58,36,22,.96) 0%, rgba(58,36,22,.86) 30%, rgba(58,36,22,0) 70%)",
+        background: "radial-gradient(ellipse 46% 42% at 50% 50%, rgba(46,27,17,.94) 0%, rgba(46,27,17,.72) 34%, rgba(46,27,17,0) 72%)",
       }} />
 
       <Grain opacity={0.08} />
 
-      {/* top spacer keeps the wordmark centered on the brown gradient */}
-      <div style={{ paddingTop: 92 }} />
+      {/* top bar — the guest path lives up here now, centered clear of the notch */}
+      <div style={{ position: "relative", display: "flex", justifyContent: "center", padding: "46px 18px 0" }}>
+        {onGuest && (
+          <button onClick={onGuest} style={{
+            display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer",
+            background: "#FEF4D610", border: "1px solid #ffffff2e", borderRadius: 999,
+            color: "#E8DCC8", fontFamily: LF.body, fontWeight: 600, fontSize: 13.5,
+            padding: "9px 15px",
+          }}>
+            <Icon name="binoculars" size={16} style={{ color: "#E3A81B" }} /> {t("landing.guest")}
+          </button>
+        )}
+      </div>
 
-      <div style={{ position: "relative", textAlign: "center", padding: "0 30px", marginBottom: 8 }}>
+      {/* centered hero — logo, eyebrow, wordmark, tagline, subline (mirrors index.html) */}
+      <div style={{
+        position: "relative", flex: 1, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", textAlign: "center", padding: "0 30px",
+      }}>
+        <LogoMark size={54} />
+        <p style={{
+          fontFamily: LF.mono, textTransform: "uppercase", letterSpacing: ".22em",
+          fontSize: 11, fontWeight: 700, color: "#3AAFA0", margin: "20px 0 0",
+        }}>{t("landing.eyebrow")}</p>
         <h1 style={{
-          fontFamily: "var(--display)", fontSize: 74, color: "#FEF4D6",
-          margin: 0, letterSpacing: ".005em", lineHeight: 0.95,
-          textShadow: "0 3px 0 #2a1a0e, 0 7px 22px rgba(0,0,0,.5)",
+          fontFamily: LF.wordmark, fontWeight: "normal", fontSize: 76, color: "#FBF3DE",
+          margin: "6px 0 0", letterSpacing: ".01em", lineHeight: 0.92,
+          textShadow: "0 2px 30px rgba(0,0,0,.4)",
         }}>Myci</h1>
         <p style={{
-          fontFamily: "'Cutive', serif", fontSize: 17, color: "#E8DCC8",
-          margin: "18px auto 0", maxWidth: 320, lineHeight: 1.5,
+          fontFamily: LF.display, fontWeight: 500, fontSize: 26, color: "#FBF3DE",
+          margin: "16px auto 0", maxWidth: 320, lineHeight: 1.18, letterSpacing: "-.01em",
         }}>
           {t("landing.tagline1")}<br />{t("landing.tagline2")}
         </p>
+        <p style={{
+          fontFamily: LF.body, fontSize: 14.5, color: "#E9D7B8",
+          margin: "14px auto 0", maxWidth: 320, lineHeight: 1.5,
+        }}>{t("landing.subline")}</p>
       </div>
 
-      <div style={{ position: "relative", width: "100%", padding: "0 28px 40px", boxSizing: "border-box" }}>
-        <Btn full icon="sparkle" onClick={onJoin} style={{ fontSize: 17, padding: "16px" }}>
+      <div style={{ position: "relative", width: "100%", padding: "0 28px 36px", boxSizing: "border-box" }}>
+        <Btn full icon="sparkle" onClick={onJoin} style={{ fontFamily: LF.body, fontWeight: 600, fontSize: 17, padding: "16px" }}>
           {t("landing.join")}
         </Btn>
-
-        {/* Guest path — judges & curious neighbors can look around with no account */}
-        {onGuest && (
-          <button onClick={onGuest} style={{
-            width: "100%", marginTop: 12, padding: "13px", cursor: "pointer",
-            background: "#FEF4D610", border: "1px solid #ffffff2e", borderRadius: 12,
-            color: "#E8DCC8", fontFamily: "'Cutive', serif", fontSize: 15,
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-          }}>
-            <Icon name="binoculars" size={17} style={{ color: "#D6AD08" }} /> {t("landing.guest")}
-          </button>
-        )}
 
         {onSignIn && (
           <button onClick={onSignIn} style={{
             display: "block", margin: "14px auto 0", background: "none", border: "none", cursor: "pointer",
-            fontFamily: "'Cutive', serif", fontSize: 14.5, color: "#E8DCC8", minHeight: 44,
+            fontFamily: LF.body, fontWeight: 600, fontSize: 14.5, color: "#E8DCC8", minHeight: 44,
           }}>
             {t("landing.signin")}
           </button>
         )}
 
-        <p style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10.5, color: "#b79a6e", textAlign: "center", marginTop: 10 }}>
+        <p style={{ fontFamily: LF.mono, fontSize: 10.5, color: "#b79a6e", textAlign: "center", marginTop: 2, letterSpacing: ".04em" }}>
           {t("landing.note")}
         </p>
         <LegalLine />
@@ -179,9 +222,11 @@ function LandingScreen({ onJoin, onSignIn, onGuest }) {
 function LegalLine() {
   const { t } = useI18n();
   const link = { color: "#cbb085", textDecoration: "underline" };
+  const our = t("legal.our");
   return (
-    <p style={{ fontFamily: "'Cutive', serif", fontSize: 10.5, color: "#9a8260", textAlign: "center", marginTop: 12, lineHeight: 1.5 }}>
-      {t("legal.agreePre")}{" "}
+    <p style={{ fontFamily: LF.body, fontSize: 9, color: "#9a8260", textAlign: "center", marginTop: 10, lineHeight: 1.45 }}>
+      {t("legal.agreePre")}<br />
+      {our ? our + " " : ""}
       <a href="/terms" target="_blank" rel="noopener noreferrer" style={link}>{t("legal.terms")}</a>{" "}
       {t("legal.and")}{" "}
       <a href="/privacy" target="_blank" rel="noopener noreferrer" style={link}>{t("legal.privacy")}</a>.
@@ -189,15 +234,18 @@ function LegalLine() {
   );
 }
 
-// ---- Onboarding: Location → What can you give? → What are you curious about? ----
+// ---- Onboarding: Location → What can you give? → What you'd learn / could use help with ----
 const GIVE_CHIPS = ["Cooking", "Gardening", "Tools to lend", "Repairs", "Childcare", "Rides", "Teaching", "Spare produce", "Carpentry", "A spare hour", "Music", "Sewing"];
 const CURIOUS_CHIPS = ["Woodworking", "Bread baking", "Bike repair", "Painting", "Composting", "A new language", "Foraging", "Pottery", "Beekeeping", "Knitting"];
+const NEED_CHIPS = ["Groceries", "Rides", "Repairs", "Tech help", "Yard work", "Company", "Heavy lifting", "A warm meal", "Childcare", "Paperwork"];
 
-function OnboardingScreen({ onDone }) {
+function OnboardingScreen({ onDone, onBack }) {
   const { t } = useI18n();
   const [step, setStep] = useState(0);
+  const [loc, setLoc] = useState(null); // { lat, lng, neighborhood, city } — coords are already fuzzed
   const [give, setGive] = useState(["Spare produce", "A spare hour"]);
   const [curious, setCurious] = useState(["Woodworking"]);
+  const [needs, setNeeds] = useState(["Rides"]);
   const steps = ["Where", "Give", "Curious"];
 
   const toggle = (arr, set, v) => set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
@@ -218,16 +266,7 @@ function OnboardingScreen({ onDone }) {
             <Eyebrow>{t("ob.step1")}</Eyebrow>
             <Headline>{t("ob.where")}</Headline>
             <Sub>{t("ob.whereSub")}</Sub>
-            <div style={{ marginTop: 24 }}>
-              <FakeField icon="map-pin" label={t("ob.neighborhood")} value="Fernwood" />
-              <FakeField icon="city" label={t("ob.city")} value="Riverside" />
-              <div style={{
-                marginTop: 16, borderRadius: 14, overflow: "hidden", height: 150, position: "relative",
-                border: "1px solid #ffffff14",
-              }}>
-                <MiniMapField />
-              </div>
-            </div>
+            <LocationStep loc={loc} onSet={setLoc} />
           </div>
         )}
         {step === 1 && (
@@ -243,21 +282,23 @@ function OnboardingScreen({ onDone }) {
             <Eyebrow>{t("ob.step3")}</Eyebrow>
             <Headline>{t("ob.curious")}</Headline>
             <Sub>{t("ob.curiousSub")}</Sub>
+            <GroupLabel icon="leaf">{t("ob.learnLabel")}</GroupLabel>
             <ChipField options={CURIOUS_CHIPS} selected={curious} onToggle={(v) => toggle(curious, setCurious, v)} tone="#8CA679" />
+            <GroupLabel icon="hand-heart">{t("ob.needLabel")}</GroupLabel>
+            <ChipField options={NEED_CHIPS} selected={needs} onToggle={(v) => toggle(needs, setNeeds, v)} tone="#C08457" />
           </div>
         )}
       </div>
 
       <div style={{ padding: "12px 28px 40px", position: "relative", display: "flex", gap: 12, alignItems: "center" }}>
-        {step > 0 && (
-          <button onClick={() => setStep(step - 1)} style={{
-            background: "none", border: "none", cursor: "pointer", color: "#b79a6e",
-            fontFamily: "'Cutive', serif", fontSize: 15, padding: "10px 4px",
-          }}>{t("common.back")}</button>
-        )}
+        <button onClick={() => (step === 0 ? onBack && onBack() : setStep(step - 1))} style={{
+          background: "none", border: "none", cursor: "pointer", color: "#b79a6e",
+          fontFamily: "'Cutive', serif", fontSize: 15, padding: "10px 4px",
+          display: "flex", alignItems: "center", gap: 6,
+        }}><Icon name="arrow-left" size={15} /> {t("common.back")}</button>
         <div style={{ flex: 1 }} />
         <Btn icon={step === 2 ? "check" : "arrow-right"}
-          onClick={() => (step === 2 ? onDone({ give, curious }) : setStep(step + 1))}>
+          onClick={() => (step === 2 ? onDone({ location: loc, give, curious, needs }) : setStep(step + 1))}>
           {step === 2 ? t("ob.enter") : t("common.next")}
         </Btn>
       </div>
@@ -272,18 +313,32 @@ function Eyebrow({ children }) {
 function Headline({ children }) {
   return <h2 style={{ fontFamily: "'Trocchi', serif", fontWeight: 400, fontSize: 27, color: "#FEF4D6", margin: "12px 0 0", lineHeight: 1.12, textWrap: "balance" }}>{children}</h2>;
 }
+// Small caption that separates the two intents on the "curious / need" step.
+function GroupLabel({ children, icon }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 7, marginTop: 28 }}>
+      {icon && <Icon name={icon} size={14} style={{ color: "#9a7a52" }} />}
+      <span style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10.5, letterSpacing: ".16em", color: "#9a7a52", textTransform: "uppercase" }}>{children}</span>
+    </div>
+  );
+}
 function Sub({ children }) {
   return <p style={{ fontFamily: "'Cutive', serif", fontSize: 14.5, color: "#c4ab83", margin: "12px 0 0", lineHeight: 1.5 }}>{children}</p>;
 }
-function FakeField({ icon, label, value }) {
+// Read-only field showing a value the location flow filled in (no caret — it's
+// derived from your spot, not a manual picker).
+function ResultField({ icon, label, value, placeholder }) {
+  const filled = !!value;
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 12, background: "#FEF4D610", border: "1px solid #ffffff16", borderRadius: 12, padding: "13px 15px", marginBottom: 11 }}>
-      <Icon name={icon} size={18} style={{ color: "var(--accent)" }} />
-      <div style={{ flex: 1 }}>
+      <Icon name={icon} size={18} style={{ color: filled ? "var(--accent)" : "#7a6244" }} />
+      <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 9.5, letterSpacing: ".14em", color: "#9a7a52", textTransform: "uppercase" }}>{label}</div>
-        <div style={{ fontFamily: "'Cutive', serif", fontSize: 16, color: "#FEF4D6", marginTop: 1 }}>{value}</div>
+        <div style={{ fontFamily: "'Cutive', serif", fontSize: 16, color: filled ? "#FEF4D6" : "#8a7252", marginTop: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          {value || placeholder}
+        </div>
       </div>
-      <Icon name="caret-down" weight="bold" size={14} style={{ color: "#9a7a52" }} />
+      {filled && <Icon name="check-circle" size={17} style={{ color: "#8CA679" }} />}
     </div>
   );
 }
@@ -298,33 +353,268 @@ function ChipField({ options, selected, onToggle, tone }) {
             padding: "9px 15px", borderRadius: 20,
             background: on ? tone : "#FEF4D60d",
             color: on ? "#2A1A0E" : "#E8DCC8",
-            border: on ? "none" : "1px solid #ffffff22",
+            border: "1px solid",
+            borderColor: on ? tone : "#ffffff22",
             boxShadow: on ? "0 2px 6px rgba(30,16,6,.3)" : "none",
-            transition: "all .12s",
-          }}>{on ? "✓ " : ""}{o}</button>
+            transition: "background .12s, color .12s, border-color .12s, box-shadow .12s",
+          }}>{o}</button>
         );
       })}
     </div>
   );
 }
 
-// a tiny static mycelium-on-soil map used in onboarding
-function MiniMapField() {
-  const { t } = useI18n();
+// ── Geocoding (OpenStreetMap Nominatim — free, no API key) ───────────────────
+const NOMINATIM = "https://nominatim.openstreetmap.org";
+const DEFAULT_CENTER = [48.4277, -123.3568]; // Fernwood, Victoria BC — matches the Map tab
+
+// Pull a neighborhood + city out of a Nominatim address object, walking the most
+// specific tag down to the broadest so sparse rural results still fill in.
+function pickPlace(addr = {}) {
+  return {
+    neighborhood: addr.neighbourhood || addr.suburb || addr.quarter || addr.city_district ||
+      addr.residential || addr.hamlet || addr.village || addr.town || "",
+    city: addr.city || addr.town || addr.municipality || addr.village || addr.county || addr.state || "",
+  };
+}
+
+// Privacy fuzz: shift the real point by up to ~300m in a random direction so the
+// circle we store and show is never centered on the exact home.
+function fuzzCoords(lat, lng) {
+  const r = 0.0008 + Math.random() * 0.0019;     // ~90m..300m
+  const a = Math.random() * Math.PI * 2;
+  const dLat = r * Math.cos(a);
+  const dLng = (r * Math.sin(a)) / Math.max(0.2, Math.cos((lat * Math.PI) / 180));
+  return { lat: lat + dLat, lng: lng + dLng };
+}
+
+// Build the fuzzed location object the rest of onboarding carries.
+function toLoc(lat, lng, addr) {
+  const f = fuzzCoords(lat, lng);
+  return { lat: f.lat, lng: f.lng, ...pickPlace(addr) };
+}
+
+// The "Where you are" step: real OSM map + use-my-location + a country-scoped
+// city / postcode search. Scoping to a country is what lets a bare postcode
+// (e.g. "V8W") actually resolve — worldwide it's ambiguous and returns nothing.
+function LocationStep({ loc, onSet }) {
+  const { t, lang } = useI18n();
+  const elRef = useRef(null);
+  const mapRef = useRef(null);
+  const circleRef = useRef(null);
+  const [status, setStatus] = useState("idle"); // idle | locating | error
+  const [country, setCountry] = useState(""); // ISO alpha-2, "" until chosen
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+
+  const countries = useMemo(() => countryList(lang), [lang]);
+  const countryName = useMemo(() => {
+    const c = countries.find((x) => x.code === country);
+    return c ? c.name : "";
+  }, [countries, country]);
+
+  // ── Build the map once ──────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!elRef.current || !window.L) return;
+    const map = L.map(elRef.current, {
+      zoomControl: false, attributionControl: true,
+      scrollWheelZoom: false, doubleClickZoom: false, dragging: true,
+      minZoom: 10, maxZoom: 17,
+    }).setView(loc ? [loc.lat, loc.lng] : DEFAULT_CENTER, loc ? 14 : 12);
+    mapRef.current = map;
+    map.attributionControl.setPrefix(false);
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+      attribution: "© OpenStreetMap contributors © CARTO", subdomains: "abcd", maxZoom: 19,
+    }).addTo(map);
+    // settle size inside the transform-scaled, animating device frame
+    const t1 = setTimeout(() => map.invalidateSize(), 60);
+    const t2 = setTimeout(() => map.invalidateSize(), 400);
+    return () => { clearTimeout(t1); clearTimeout(t2); map.remove(); mapRef.current = null; circleRef.current = null; };
+  }, []);
+
+  // ── Draw / move the ±500m fuzz ring when the chosen spot changes ─────────────
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loc) return;
+    if (circleRef.current) circleRef.current.remove();
+    circleRef.current = L.circle([loc.lat, loc.lng], {
+      radius: 500, color: "#D6AD08", weight: 1.5, opacity: 0.95,
+      fillColor: "#D6AD08", fillOpacity: 0.16, dashArray: "4 6",
+    }).addTo(map);
+    map.flyTo([loc.lat, loc.lng], 14, { duration: 0.7 });
+  }, [loc]);
+
+  // ── Frame the map on the chosen country until a precise spot is picked ───────
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !country || loc) return;
+    fetch(`${NOMINATIM}/search?format=jsonv2&limit=1&countrycodes=${country}&q=${encodeURIComponent(countryName || country)}`)
+      .then((r) => r.json())
+      .then((list) => {
+        const bb = list && list[0] && list[0].boundingbox;
+        if (!bb || !mapRef.current || loc) return;
+        const s = parseFloat(bb[0]), n = parseFloat(bb[1]), w = parseFloat(bb[2]), e = parseFloat(bb[3]);
+        mapRef.current.fitBounds([[s, w], [n, e]]);
+      })
+      .catch(() => {});
+  }, [country]);
+
+  // ── Geolocation → reverse geocode (also fills in the country) ────────────────
+  const useMyLocation = () => {
+    if (!navigator.geolocation) { setStatus("error"); return; }
+    setStatus("locating");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        fetch(`${NOMINATIM}/reverse?format=jsonv2&zoom=14&addressdetails=1&lat=${latitude}&lon=${longitude}`)
+          .then((r) => r.json())
+          .then((d) => {
+            const cc = d.address && d.address.country_code;
+            if (cc) setCountry(cc.toUpperCase());
+            onSet(toLoc(latitude, longitude, d.address));
+            setStatus("idle"); setResults([]); setQuery("");
+          })
+          .catch(() => setStatus("error"));
+      },
+      () => setStatus("error"),
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+    );
+  };
+
+  // ── Country-scoped city / postcode search (debounced) ────────────────────────
+  useEffect(() => {
+    if (!country || query.trim().length < 3) { setResults([]); setSearching(false); return; }
+    setSearching(true);
+    const id = setTimeout(() => {
+      fetch(`${NOMINATIM}/search?format=jsonv2&addressdetails=1&limit=6&countrycodes=${country}&q=${encodeURIComponent(query)}`)
+        .then((r) => r.json())
+        .then((list) => { setResults(Array.isArray(list) ? list : []); setSearching(false); })
+        .catch(() => { setResults([]); setSearching(false); });
+    }, 600);
+    return () => clearTimeout(id);
+  }, [query, country]);
+
+  const pick = (item) => {
+    onSet(toLoc(parseFloat(item.lat), parseFloat(item.lon), item.address));
+    setResults([]); setQuery("");
+    setStatus("idle");
+  };
+
+  const onCountry = (e) => { setCountry(e.target.value); setQuery(""); setResults([]); setStatus("idle"); };
+  const searchEnabled = !!country;
+
   return (
-    <div style={{ position: "absolute", inset: 0, background: "radial-gradient(130% 100% at 40% 20%, #6f5436, #4a3722)" }}>
-      <Grain opacity={0.1} />
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
-        {[[20,30,55,45],[55,45,80,28],[55,45,46,76],[46,76,24,84],[80,28,83,55]].map((e, i) => (
-          <path key={i} d={threadPath(e[0], e[1], e[2], e[3], i + 2)} fill="none" stroke="#D6AD08" strokeOpacity={0.4} strokeWidth={0.5} />
-        ))}
-        {[[20,30],[55,45],[80,28],[46,76],[24,84],[83,55]].map((p, i) => (
-          <circle key={i} cx={p[0]} cy={p[1]} r={i === 1 ? 2.6 : 1.6} fill={i === 1 ? "#D6AD08" : "#E8DCC8"} />
-        ))}
-      </svg>
-      <div style={{ position: "absolute", left: "55%", top: "45%", transform: "translate(-50%,-160%)", fontFamily: "'Cutive Mono', monospace", fontSize: 9, color: "#FEF4D6", background: "#2a1a0eaa", padding: "2px 6px", borderRadius: 4 }}>{t("ob.youRoughly")}</div>
+    <div style={{ marginTop: 22 }}>
+      {/* Use my location */}
+      <Btn full kind="dark" icon="crosshair"
+        onClick={useMyLocation}
+        style={{ justifyContent: "center", opacity: status === "locating" ? 0.7 : 1 }}>
+        {status === "locating" ? t("ob.locating") : t("ob.useLocation")}
+      </Btn>
+
+      {/* divider */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "16px 0" }}>
+        <div style={{ flex: 1, height: 1, background: "#ffffff1c" }} />
+        <span style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10.5, letterSpacing: ".12em", color: "#9a7a52", textTransform: "uppercase" }}>{t("ob.orType")}</span>
+        <div style={{ flex: 1, height: 1, background: "#ffffff1c" }} />
+      </div>
+
+      {/* Country first — scopes the search so postcodes resolve */}
+      <div style={{ position: "relative", marginBottom: 11 }}>
+        <Icon name="globe" size={18} style={{ position: "absolute", left: 15, top: "50%", transform: "translateY(-50%)", color: "var(--accent)", pointerEvents: "none" }} />
+        <select
+          value={country}
+          onChange={onCountry}
+          aria-label={t("ob.country")}
+          style={{
+            width: "100%", boxSizing: "border-box", cursor: "pointer",
+            background: "#FEF4D610", border: "1px solid #ffffff16", borderRadius: 12,
+            padding: "14px 38px 14px 44px", color: country ? "#FEF4D6" : "#a98f68",
+            fontFamily: "'Cutive', serif", fontSize: 15, outline: "none",
+            WebkitAppearance: "none", MozAppearance: "none", appearance: "none",
+          }}
+        >
+          <option value="" style={{ color: "#2A1A0E" }}>{t("ob.selectCountry")}</option>
+          {countries.map((c) => (
+            <option key={c.code} value={c.code} style={{ color: "#2A1A0E" }}>{c.name}</option>
+          ))}
+        </select>
+        <Icon name="caret-down" weight="bold" size={14} style={{ position: "absolute", right: 15, top: "50%", transform: "translateY(-50%)", color: "#9a7a52", pointerEvents: "none" }} />
+      </div>
+
+      {/* City / postcode search (scoped to the chosen country) */}
+      <div style={{ position: "relative" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, background: "#FEF4D610", border: "1px solid #ffffff16", borderRadius: 12, padding: "12px 14px", opacity: searchEnabled ? 1 : 0.55 }}>
+          <Icon name="magnifying-glass" size={17} style={{ color: "#9a7a52" }} />
+          <input
+            value={query}
+            disabled={!searchEnabled}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={searchEnabled ? t("ob.addressPlaceholder") : t("ob.searchDisabled")}
+            style={{
+              flex: 1, background: "none", border: "none", outline: "none",
+              color: "#FEF4D6", fontFamily: "'Cutive', serif", fontSize: 15,
+              cursor: searchEnabled ? "text" : "not-allowed",
+            }}
+          />
+          {searching && <Icon name="spinner-gap" size={15} className="myc-spin" style={{ color: "#9a7a52" }} />}
+        </div>
+
+        {/* results dropdown */}
+        {searchEnabled && query.trim().length >= 3 && (results.length > 0 || !searching) && (
+          <div style={{
+            position: "absolute", left: 0, right: 0, top: "calc(100% + 6px)", zIndex: 50,
+            background: "#2a1a0e", border: "1px solid #ffffff20", borderRadius: 12,
+            overflow: "hidden", boxShadow: "0 12px 30px rgba(0,0,0,.5)",
+          }}>
+            {results.length === 0 && !searching ? (
+              <div style={{ padding: "13px 15px", fontFamily: "'Cutive', serif", fontSize: 13.5, color: "#a98f68" }}>{t("ob.noResults")}</div>
+            ) : (
+              results.map((r, i) => (
+                <button key={r.place_id || i} onClick={() => pick(r)} style={{
+                  display: "flex", alignItems: "center", gap: 10, width: "100%", textAlign: "left",
+                  background: "none", border: "none", cursor: "pointer",
+                  padding: "11px 14px", borderTop: i ? "1px solid #ffffff12" : "none",
+                }}>
+                  <Icon name="map-pin" size={15} style={{ color: "var(--accent)", flexShrink: 0 }} />
+                  <span style={{ fontFamily: "'Cutive', serif", fontSize: 13.5, color: "#E8DCC8", lineHeight: 1.3 }}>{r.display_name}</span>
+                </button>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+
+      {status === "error" && (
+        <p style={{ fontFamily: "'Cutive', serif", fontSize: 12.5, color: "#d9a06a", margin: "10px 2px 0", display: "flex", alignItems: "center", gap: 6 }}>
+          <Icon name="warning-circle" size={14} /> {t("ob.locateError")}
+        </p>
+      )}
+
+      {/* resolved place */}
+      <div style={{ marginTop: 16 }}>
+        <ResultField icon="map-pin" label={t("ob.neighborhood")} value={loc && loc.neighborhood} placeholder="—" />
+        <ResultField icon="city" label={t("ob.city")} value={loc && loc.city} placeholder="—" />
+      </div>
+
+      {/* real map with the fuzz ring */}
+      <div style={{ marginTop: 5, borderRadius: 14, overflow: "hidden", height: 168, position: "relative", border: "1px solid #ffffff14" }}>
+        <div ref={elRef} className="myci-map myci-map-mini" style={{ position: "absolute", inset: 0 }} />
+        <div style={{
+          position: "absolute", left: 10, top: 10, zIndex: 500, pointerEvents: "none",
+          fontFamily: "'Cutive Mono', monospace", fontSize: 9, color: "#FEF4D6",
+          background: "#2a1a0ecc", padding: "3px 8px", borderRadius: 6,
+        }}>{loc ? t("ob.fuzzCaption") : t("ob.youRoughly")}</div>
+      </div>
+
+      {/* privacy reassurance */}
+      <p style={{ fontFamily: "'Cutive', serif", fontSize: 12.5, color: "#a78a5e", margin: "12px 2px 0", lineHeight: 1.5, display: "flex", gap: 8 }}>
+        <Icon name="lock-simple" size={15} style={{ color: "#8CA679", flexShrink: 0, marginTop: 1 }} />
+        {t("ob.privacyLock")}
+      </p>
     </div>
   );
 }
 
-Object.assign(window, { LandingScreen, OnboardingScreen, MyceliumBloom, LegalLine });
+Object.assign(window, { LandingScreen, OnboardingScreen, MyceliumBloom, LegalLine, MyceliumNet, LogoMark, LF });

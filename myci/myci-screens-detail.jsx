@@ -106,15 +106,6 @@ const COMPOSE_TYPES = [
   { type: "event", icon: "fire", label: "Event" },
   { type: "mutual_aid", icon: "handshake", label: "Mutual Aid" },
 ];
-const COMPOSE_PROMPTS = {
-  offer: "What do you have to give, share, or lend?",
-  request: "What do you need a hand with?",
-  skill_share: "What could you teach a neighbor?",
-  barter: "What would you like to trade, and for what?",
-  event: "What's happening, and when?",
-  mutual_aid: "What can you offer — and what would you need back?",
-};
-
 function ComposeScreen({ onBack, onPosted }) {
   const { t } = useI18n();
   const [type, setType] = useState("offer");
@@ -169,14 +160,14 @@ function ComposeScreen({ onBack, onPosted }) {
                   background: on ? "#fff8" : "#fff4",
                 }}>
                   <Sticker icon={c.icon} tone={cty.tone} ink={cty.ink} size={40} variant="blob" outline={c.type === "event"} />
-                  <span style={{ fontFamily: "'Cutive', serif", fontSize: 12, color: "#2A1A0E" }}>{c.label}</span>
+                  <span style={{ fontFamily: "'Cutive', serif", fontSize: 12, color: "#2A1A0E" }}>{t("type." + c.type)}</span>
                 </button>
               );
             })}
           </div>
 
           <FieldLabel style={{ marginTop: 22 }}>{t("compose.titleLabel")}</FieldLabel>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={COMPOSE_PROMPTS[type]} aria-label={t("compose.titleLabel")}
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("compose.prompt." + type)} aria-label={t("compose.titleLabel")}
             style={inputStyle} />
 
           <FieldLabel style={{ marginTop: 18 }}>{t("compose.bodyLabel")}</FieldLabel>
@@ -185,17 +176,17 @@ function ComposeScreen({ onBack, onPosted }) {
           <FieldLabel style={{ marginTop: 18 }}>{t("compose.photoLabel")}</FieldLabel>
           <div style={{ marginTop: 8 }}><PhotoSlot label={t("compose.photoSlot")} height={92} /></div>
 
-          <FieldLabel style={{ marginTop: 18 }}>What would you accept in return?</FieldLabel>
+          <FieldLabel style={{ marginTop: 18 }}>{t("compose.acceptLabel")}</FieldLabel>
           <div style={{ display: "flex", gap: 8, marginTop: 9, flexWrap: "wrap" }}>
-            {["Nothing — a gift", "Anything you like", "Something specific"].map((o, i) => (
-              <Pill key={o} on={i === 0}>{o}</Pill>
+            {["compose.accept.nothing", "compose.accept.anything", "compose.accept.specific"].map((k, i) => (
+              <Pill key={k} on={i === 0}>{t(k)}</Pill>
             ))}
           </div>
 
-          <FieldLabel style={{ marginTop: 18 }}>Who can see this?</FieldLabel>
+          <FieldLabel style={{ marginTop: 18 }}>{t("compose.visLabel")}</FieldLabel>
           <div style={{ display: "flex", gap: 8, marginTop: 9 }}>
-            {["My block", "My neighborhood", "My city"].map((o, i) => (
-              <Pill key={o} on={i === 1}>{o}</Pill>
+            {["compose.vis.block", "compose.vis.neighborhood", "compose.vis.city"].map((k, i) => (
+              <Pill key={k} on={i === 1}>{t(k)}</Pill>
             ))}
           </div>
 
@@ -448,7 +439,7 @@ function MessagesScreen({ convos, onOpenThread, onOpenNotifications }) {
         <div style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
           <div>
             <div style={{ fontFamily: "'Cutive Mono', monospace", fontSize: 10.5, letterSpacing: ".2em", color: "#D6AD08", textTransform: "uppercase" }}>Coordinating</div>
-            <h1 style={{ fontFamily: "var(--display)", fontSize: 24, color: "#FEF4D6", margin: "3px 0 0" }}>{t("messages.title")}</h1>
+            <h1 style={{ fontFamily: "var(--display)", fontWeight: "normal", fontSize: 24, color: "#FEF4D6", margin: "3px 0 0" }}>{t("messages.title")}</h1>
           </div>
           <button onClick={onOpenNotifications} aria-label={t("notif.title")} style={{ position: "relative", background: "#FEF4D612", border: "1px solid #ffffff20", borderRadius: 10, width: 44, height: 44, cursor: "pointer", display: "grid", placeItems: "center" }}>
             <Icon name="bell" size={17} style={{ color: "#FEF4D6" }} />
@@ -583,7 +574,7 @@ function NotificationsScreen({ onBack, onOpenPost }) {
 }
 
 // ---------- SETTINGS ----------
-function SettingsScreen({ onBack }) {
+function SettingsScreen({ onBack, onSignedOut }) {
   const { t, lang, units, setLang, setUnits, languages } = useI18n();
   const auth = useAuth();
   const [busy, setBusy] = useState(false);
@@ -651,7 +642,7 @@ function SettingsScreen({ onBack }) {
                 </div>
                 <LinkRow label={t("settings.export")} icon="download-simple" onClick={busy ? null : exportData} />
                 <LinkRow label={t("settings.delete")} icon="trash" danger onClick={busy ? null : deleteAccount} />
-                <LinkRow label={t("settings.signOut")} icon="sign-out" onClick={() => auth.signOut()} />
+                <LinkRow label={t("settings.signOut")} icon="sign-out" onClick={() => auth.signOut().then(() => onSignedOut && onSignedOut())} />
               </React.Fragment>
             ) : (
               <div style={{ padding: "16px 14px", fontFamily: "'Cutive', serif", fontSize: 14, color: "#6a5238" }}>
