@@ -65,7 +65,7 @@ const POSTS = [
     body: "My backyard tree went absolutely wild this year and I cannot eat them fast enough. Bring a bag or a bucket — come pick as many as you like before the birds get them.",
     tags: ["food", "surplus", "free"], distance: "0.2 mi", when: "2h ago",
     accept: "Nothing — it's a gift", visibility: "My block",
-    photo: "cherries on the tree", photoUrl: "https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=640&q=70",
+    photo: "a basket of fresh-picked cherries", photoUrl: "https://images.unsplash.com/photo-1626829622490-43c7d7c80ac8?w=640&q=70&auto=format&fit=crop",
   },
   {
     id: "p_couch", authorId: "devon", type: "request", typeLabel: "Request",
