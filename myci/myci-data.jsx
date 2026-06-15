@@ -64,7 +64,8 @@ const POSTS = [
     category: "Food", icon: "cherries", title: "A whole tree's worth of cherries",
     body: "My backyard tree went absolutely wild this year and I cannot eat them fast enough. Bring a bag or a bucket — come pick as many as you like before the birds get them.",
     tags: ["food", "surplus", "free"], distance: "0.2 mi", when: "2h ago",
-    accept: "Nothing — it's a gift", visibility: "My block", photo: "cherries on the tree",
+    accept: "Nothing — it's a gift", visibility: "My block",
+    photo: "cherries on the tree", photoUrl: "https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=640&q=70",
   },
   {
     id: "p_couch", authorId: "devon", type: "request", typeLabel: "Request",
@@ -72,6 +73,7 @@ const POSTS = [
     body: "Just need one strong neighbor for 30 minutes to help carry a couch down two flights and into a van. I'll have it wrapped and ready. Cold drinks on me.",
     tags: ["physical-help", "moving"], distance: "0.5 mi", when: "5h ago",
     accept: "I'll owe you one", visibility: "My neighborhood",
+    photo: "the couch, wrapped and ready", photoUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=640&q=70",
   },
   {
     id: "p_wood", authorId: "tomas", type: "skill_share", typeLabel: "Skill Share",
@@ -79,13 +81,15 @@ const POSTS = [
     body: "Been doing woodworking for 20 years. I'll walk you through building a cedar planter from scratch — yours to keep — if you spend an afternoon helping me clear the back garden.",
     tags: ["skills", "woodworking", "gardening"], distance: "0.8 mi", when: "1d ago",
     accept: "An afternoon of garden help", visibility: "My neighborhood",
+    photo: "a cedar planter box", photoUrl: "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=640&q=70",
   },
   {
     id: "p_bbq", authorId: "priya", type: "event", typeLabel: "Event",
     category: "Events", icon: "fire", title: "Fernwood block BBQ — this Saturday, 5pm",
     body: "Grills are out front of #114. Bring a side, a chair, and an appetite. Kids and dogs welcome. Let's actually meet the people we wave at.",
     tags: ["events", "food", "gathering"], distance: "0.3 mi", when: "1d ago",
-    accept: "Bring a dish to share", visibility: "My neighborhood", photo: "the block, set up for a BBQ",
+    accept: "Bring a dish to share", visibility: "My neighborhood",
+    photo: "the block, set up for a BBQ", photoUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=640&q=70",
   },
   {
     id: "p_garden", authorId: "eleanor", type: "mutual_aid", typeLabel: "Mutual Aid",
@@ -93,6 +97,7 @@ const POSTS = [
     body: "I've grown food on this street for 40 years and I can teach you everything — but I can't bend down anymore. Trade my know-how for an hour of weeding now and then?",
     tags: ["gardening", "mutual-aid", "knowledge"], distance: "0.6 mi", when: "2d ago",
     accept: "An hour of weeding, here and there", visibility: "My block",
+    photo: "the garden, mid-season", photoUrl: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=640&q=70",
   },
   {
     id: "p_tools", authorId: "marcus", type: "offer", typeLabel: "Tool Loan",
@@ -100,6 +105,7 @@ const POSTS = [
     body: "Drill, circular saw, orbital sander, a good ladder, hand tools. All labeled, all yours to borrow. Just bring it back clean and tell me what you made.",
     tags: ["tools", "lending", "diy"], distance: "0.4 mi", when: "3d ago",
     accept: "Bring it back clean", visibility: "My neighborhood",
+    photo: "the tool wall", photoUrl: "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=640&q=70",
   },
   {
     id: "p_art", authorId: "aisha", type: "barter", typeLabel: "Barter",
@@ -107,13 +113,15 @@ const POSTS = [
     body: "I teach watercolour and lino printing. I'd love to swap a lesson for a home-cooked meal, a jar of something, or a craft you made yourself. Let's trade what we're good at.",
     tags: ["crafts", "skills", "food"], distance: "0.7 mi", when: "3d ago",
     accept: "Homemade food or a handmade craft", visibility: "My neighborhood",
+    photo: "a watercolour in progress", photoUrl: "https://loremflickr.com/640/420/watercolor,painting?lock=88",
   },
   {
     id: "p_jam", authorId: "theo", type: "offer", typeLabel: "Surplus",
     category: "Food", icon: "jar", title: "Plum jam — six jars going spare",
     body: "Made way too much plum jam from the tree out back. Six jars looking for a good piece of toast. First come, first served — leave the empty jar on my porch when you're done.",
     tags: ["food", "preserves", "surplus"], distance: "0.9 mi", when: "4d ago",
-    accept: "Return the empty jar", visibility: "My neighborhood", photo: "jars of plum jam on a sill",
+    accept: "Return the empty jar", visibility: "My neighborhood",
+    photo: "jars of plum jam on a sill", photoUrl: "https://loremflickr.com/640/420/homemade,jam,jars?lock=30",
   },
   {
     id: "p_bike", authorId: "joon", type: "skill_share", typeLabel: "Skill Share",
@@ -121,6 +129,7 @@ const POSTS = [
     body: "I've got a stand and the tools. Roll your bike over Sunday morning and I'll true your wheels, adjust your brakes, and show you how to do it yourself next time.",
     tags: ["skills", "bikes", "repair"], distance: "1.1 mi", when: "5d ago",
     accept: "Nothing — pass it on", visibility: "My neighborhood",
+    photo: "the repair stand, ready to go", photoUrl: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=640&q=70",
   },
 ];
 

@@ -185,8 +185,11 @@ function threadPath(x1, y1, x2, y2, seed = 1) {
   return `M ${x1} ${y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${x2} ${y2}`;
 }
 
-// Image placeholder (striped, monospace label) — per design guidance.
-function PhotoSlot({ label, height = 150, radius = 12 }) {
+// Image slot. With `src` it shows a real photo (the striped weave shows through
+// while it loads / if it fails); without one it stays a labelled placeholder.
+function PhotoSlot({ label, src, alt, height = 150, radius = 12 }) {
+  const [failed, setFailed] = useState(false);
+  const showImg = src && !failed;
   return (
     <div style={{
       height, borderRadius: radius, overflow: "hidden", position: "relative",
@@ -195,10 +198,18 @@ function PhotoSlot({ label, height = 150, radius = 12 }) {
       border: "1px solid #472c1c22",
       display: "grid", placeItems: "center",
     }}>
-      <span style={{
-        fontFamily: "'Cutive Mono', monospace", fontSize: 11.5, color: "#8a6f4a",
-        letterSpacing: ".05em", textTransform: "lowercase", padding: "0 16px", textAlign: "center",
-      }}>{label}</span>
+      {showImg && (
+        <img
+          src={src} alt={alt || label} loading="lazy" onError={() => setFailed(true)}
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+        />
+      )}
+      {!showImg && (
+        <span style={{
+          fontFamily: "'Cutive Mono', monospace", fontSize: 11.5, color: "#8a6f4a",
+          letterSpacing: ".05em", textTransform: "lowercase", padding: "0 16px", textAlign: "center",
+        }}>{label}</span>
+      )}
     </div>
   );
 }

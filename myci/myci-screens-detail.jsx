@@ -58,7 +58,7 @@ function PostDetailScreen({ post, onBack, onReachOut, onOpenProfile }) {
             {canOpenProfile && <Icon name="caret-right" weight="bold" size={15} style={{ color: "#9a7a52" }} />}
           </button>
 
-          {post.photo && <div style={{ marginTop: 16 }}><PhotoSlot label={`photo — ${post.photo}`} height={170} /></div>}
+          {(post.photoUrl || post.photo) && <div style={{ marginTop: 16 }}><PhotoSlot src={post.photoUrl} alt={post.photo || post.title} label={`photo — ${post.photo}`} height={170} /></div>}
 
           <p style={{ fontFamily: "'Trocchi', serif", fontSize: 15.5, lineHeight: 1.6, color: "#3f2f1f", margin: "18px 0 0" }}>{post.body}</p>
 
@@ -474,13 +474,22 @@ function MessagesScreen({ convos, onOpenThread, onOpenNotifications }) {
 }
 
 // ---------- THREAD ----------
-function ThreadScreen({ convo, onBack, onComplete, completed }) {
+function ThreadScreen({ convo, onBack, onComplete, onSend, completed }) {
   const { t } = useI18n();
-  const n = NEIGHBOR_BY_ID[convo.withId];
   const post = POST_BY_ID[convo.postId];
+  const n = NEIGHBOR_BY_ID[convo.withId]
+    || personFor(post)
+    || { id: convo.withId, name: "Neighbor", first: "Neighbor", initials: "··", tone: "#8CA679" };
   const [draft, setDraft] = useState("");
   const scrollRef = useRef(null);
   useEffect(() => { if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight; }, [convo.thread.length]);
+
+  function send() {
+    const text = draft.trim();
+    if (!text) return;
+    onSend && onSend(convo, text);
+    setDraft("");
+  }
 
   return (
     <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", background: "#E3D5BC" }}>
@@ -532,9 +541,11 @@ function ThreadScreen({ convo, onBack, onComplete, completed }) {
 
       {/* composer */}
       <div style={{ display: "flex", gap: 9, alignItems: "center", padding: "10px 14px 24px", flexShrink: 0 }}>
-        <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={t("thread.placeholder")} aria-label={t("thread.placeholder")}
+        <input value={draft} onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); send(); } }}
+          placeholder={t("thread.placeholder")} aria-label={t("thread.placeholder")}
           style={{ flex: 1, padding: "12px 14px", borderRadius: 22, border: "1px solid #472c1c22", background: "#FBF4E2", fontFamily: "'Trocchi', serif", fontSize: 14.5, outline: "none" }} />
-        <button aria-label="Send" style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--accent)", border: "none", cursor: "pointer", display: "grid", placeItems: "center", boxShadow: "0 3px 0 #8a6f00" }}>
+        <button onClick={send} disabled={!draft.trim()} aria-label="Send" style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--accent)", border: "none", cursor: draft.trim() ? "pointer" : "default", opacity: draft.trim() ? 1 : 0.55, display: "grid", placeItems: "center", boxShadow: "0 3px 0 #8a6f00" }}>
           <Icon name="paper-plane-tilt" size={18} style={{ color: "#3A2410" }} />
         </button>
       </div>

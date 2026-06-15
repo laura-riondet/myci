@@ -76,6 +76,13 @@ function PostCard({ post, onOpen, cardStyle = "pinned", stickerStyle = "blob", i
         </div>
       </div>
 
+      {/* photo */}
+      {post.photoUrl && (
+        <div style={{ marginTop: 12 }}>
+          <PhotoSlot src={post.photoUrl} alt={post.photo || post.title} label={`photo — ${post.photo || ""}`} height={128} radius={12} />
+        </div>
+      )}
+
       {/* body */}
       <p style={{
         margin: "10px 0 0", fontFamily: "'Trocchi', serif", fontSize: 13.8,

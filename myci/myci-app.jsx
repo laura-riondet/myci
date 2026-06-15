@@ -67,8 +67,11 @@ function App() {
   function flash(msg) { setToast(msg); clearTimeout(flash._t); flash._t = setTimeout(() => setToast(null), 2600); }
 
   function reachOut(post) {
-    if (!requireAuth(tr("post.reachOut"))) return;
-    const n = NEIGHBOR_BY_ID[post.authorId];
+    // Demo: reaching out is open to guests (like the compose flow) so the whole
+    // exchange loop is walkable without signing in.
+    // personFor resolves seed neighbors AND self-contained live authors, so the
+    // prefill never trips over a post that didn't come from the seed roster.
+    const n = personFor(post, auth.user) || NEIGHBOR_BY_ID.you;
     let convo = convos.find((c) => c.withId === post.authorId && c.postId === post.id);
     if (!convo) {
       convo = {
@@ -78,6 +81,16 @@ function App() {
       setConvos((cs) => [convo, ...cs]);
     }
     go("thread", { threadId: convo.id });
+  }
+
+  function sendMessage(convo, text) {
+    const body = (text || "").trim();
+    if (!body) return;
+    setConvos((cs) => cs.map((c) =>
+      c.id === convo.id
+        ? { ...c, unread: false, last: body, thread: [...c.thread, { from: "you", body, when: "now" }] }
+        : c
+    ));
   }
 
   function completeExchange(convo) {
@@ -113,7 +126,7 @@ function App() {
         {s === "compose" && <ComposeScreen onBack={back} onPosted={() => tab("feed")} />}
         {s === "profile" && <ProfileScreen personId={view.personId} exchanges={exchanges} onBack={view.personId === "you" ? null : back} onOpenPost={(id) => go("post", { post: POST_BY_ID[id] })} onOpenSettings={() => go("settings")} onOpenNotifications={openNotifs} />}
         {s === "messages" && <MessagesScreen convos={convos} onOpenThread={(id) => go("thread", { threadId: id })} onOpenNotifications={openNotifs} />}
-        {s === "thread" && currentConvo && <ThreadScreen convo={currentConvo} onBack={back} onComplete={completeExchange} completed={!!completed[currentConvo.id]} />}
+        {s === "thread" && currentConvo && <ThreadScreen convo={currentConvo} onBack={back} onComplete={completeExchange} onSend={sendMessage} completed={!!completed[currentConvo.id]} />}
         {s === "notifications" && <NotificationsScreen onBack={back} onOpenPost={(id) => go("post", { post: POST_BY_ID[id] })} />}
         {s === "settings" && <SettingsScreen onBack={back} onSignedOut={() => tab("landing")} />}
         {s === "signin" && <SignInScreen onBack={back} reason={view.reason} />}
